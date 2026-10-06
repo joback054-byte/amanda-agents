@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amanda Agent</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p1:#e8386d;--p2:#8b2fc9;--bg:#fdf7fa;--card:#fff;--ink:#2a1a24;--muted:#8a7680;--line:#f2e3eb}
+[data-theme="dark"]{--bg:#150810;--card:#221320;--ink:#f6ecf2;--muted:#9d8795;--line:#3a2036}
+[data-accent="blue"]{--p1:#2563eb;--p2:#0ea5e9}
+[data-accent="green"]{--p1:#10b981;--p2:#059669}
+[data-accent="gold"]{--p1:#c79a2a;--p2:#e6c25c}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:15px;color:inherit}
+a{color:inherit;text-decoration:none}
+.nav{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;flex-wrap:wrap}
+.logo{width:54px;height:54px;border-radius:50%;overflow:hidden;background:#FBFBF9;border:2px solid var(--line);display:grid;place-items:center;font-weight:800;color:#e8386d;font-size:20px;flex-shrink:0;box-shadow:0 4px 12px rgba(232,56,109,.12)}
+.logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.brand-name{font-weight:800;font-size:16px}
+.brand-sub{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.spacer{flex:1}
+.icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;font-size:16px}
+.lang-wrap{position:relative}
+.lang-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:180px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.15);padding:6px;display:none;z-index:90}
+.lang-wrap.open .lang-menu{display:block}
+.lang-item{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:10px;font-size:13.5px;text-align:left;cursor:pointer;color:var(--ink)}
+.lang-item:hover{background:rgba(232,56,109,.08)}
+.lang-item.on{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff}
+.wrap{max-width:600px;margin:0 auto;padding:20px 16px 60px}
+.hero{text-align:center;padding:30px 0 20px}
+.badge{display:inline-block;padding:6px 14px;border-radius:100px;background:rgba(232,56,109,.1);color:var(--p1);font-size:12px;font-weight:600;margin-bottom:16px}
+.hero h1{font-size:28px;font-weight:800;margin-bottom:12px;line-height:1.2}
+.hl{background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:15px;margin-bottom:24px}
+.cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 24px;border-radius:12px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:6px;justify-content:center;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff}
+.btn-ghost{background:var(--card);border:1.5px solid var(--line);color:var(--ink)}
+.btn-model{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff}
+.btn-block{width:100%}
+.mini-stats{display:flex;gap:24px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.mini-stats .m{text-align:center}
+.mini-stats strong{display:block;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mini-stats span{font-size:12px;color:var(--muted)}
+.front-photo-section{margin-top:24px;border-radius:20px;overflow:hidden;box-shadow:0 10px 30px rgba(140,50,110,.15);border:1px solid var(--line);background:var(--card)}
+.front-photo-section img{width:100%;display:block;object-fit:cover;aspect-ratio:16/9;min-height:180px}
+.features{display:grid;gap:14px;margin-top:30px}
+.fcard{background:var(--card);border-radius:16px;padding:20px;border:1px solid var(--line)}
+.fcard .ico{width:48px;height:48px;border-radius:14px;background:rgba(232,56,109,.1);display:grid;place-items:center;font-size:22px;margin-bottom:12px}
+.fcard h3{font-size:16px;margin-bottom:6px}
+.fcard p{color:var(--muted);font-size:13px}
+.contact{margin-top:30px;background:linear-gradient(135deg,#2a1020,#46143a);border-radius:20px;padding:28px 22px;color:#fff}
+.contact h2{font-size:22px;margin-bottom:8px}
+.contact .sub{opacity:.75;font-size:14px;margin-bottom:20px}
+.contact-list{display:grid;gap:10px}
+.cbox{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:rgba(255,255,255,.08)}
+.cbox .ci{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.cbox b{display:block;font-size:14px}
+.cbox small{font-size:12px;opacity:.7}
+.site-footer{background:var(--card);border-top:1px solid var(--line);margin-top:40px;padding:32px 16px 18px}
+.footer-inner{max-width:900px;margin:0 auto;display:grid;gap:24px}
+.fc-brand{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.fc-brand .flogo{width:44px;height:44px;border-radius:50%;background:#FBFBF9;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:#e8386d;font-size:18px;overflow:hidden;flex-shrink:0}
+.fc-brand .flogo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.fc-brand b{display:block;font-size:16px;font-weight:800}
+.fc-brand small{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.fc-section h4{font-size:13px;font-weight:700;margin-bottom:10px}
+.fc-section a,.fc-section p{display:block;font-size:13px;color:var(--muted);padding:5px 0}
+.footer-bottom{text-align:center;color:var(--muted);font-size:11.5px;padding-top:18px;margin-top:18px;border-top:1px solid var(--line)}
+.modal-bg{position:fixed;inset:0;background:rgba(20,8,16,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:200;overflow-y:auto}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);border-radius:24px;width:100%;max-width:460px;padding:28px 22px;position:relative;max-height:95vh;overflow-y:auto;margin:auto}
+.mclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:rgba(232,56,109,.1);color:var(--muted);font-size:20px;display:grid;place-items:center;cursor:pointer}
+.modal-logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;color:#fff;font-weight:800;font-size:24px;margin:0 auto 16px}
+.modal h3{text-align:center;font-size:22px;margin-bottom:6px}
+.modal .msub{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:20px}
+.tabs{display:flex;background:rgba(232,56,109,.08);border-radius:12px;padding:4px;margin-bottom:20px;gap:4px}
+.tab{flex:1;padding:10px;border-radius:9px;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer}
+.tab.on{background:var(--card);color:var(--p1)}
+.tab.model.on{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.field .req{color:var(--p1)}
+.input{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font-size:15px;outline:none;color:var(--ink)}
+textarea.input{resize:vertical;min-height:70px;font-family:inherit}
+select.input{cursor:pointer;padding-right:32px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a7680' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.phone-row{display:flex;gap:8px}
+.phone-row select{max-width:120px;font-size:13px}
+.phone-row .input{flex:1;min-width:0}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{background:#fff0f3;color:#c9224f;padding:11px 14px;border-radius:11px;font-size:13px;margin-bottom:14px;border:1px solid #ffd4de;display:none}
+.err.show{display:block}
+.ok{background:#f0fdf4;color:#15803d;padding:11px 14px;border-radius:11px;font-size:13px;margin-bottom:14px;border:1px solid #bbf7d0;display:none;white-space:pre-line}
+.ok.show{display:block}
+.hint{background:rgba(232,56,109,.08);border:1px dashed rgba(232,56,109,.3);border-radius:11px;padding:11px 14px;font-size:12px;color:var(--muted);margin-top:14px;text-align:center;line-height:1.7}
+.hint.model{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3)}
+.photo-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.photo-slot{aspect-ratio:1;border-radius:14px;background:var(--bg);border:2px dashed rgba(232,56,109,.35);display:grid;place-items:center;cursor:pointer;overflow:hidden;position:relative}
+.photo-slot img{width:100%;height:100%;object-fit:cover}
+.photo-slot .ph{font-size:26px;opacity:.5;text-align:center;line-height:1.2}
+.photo-slot .ph small{display:block;font-size:10px;margin-top:4px;color:var(--muted)}
+.photo-slot .rm{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(220,30,80,.9);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;cursor:pointer}
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:1px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line)}
+.toast{position:fixed;top:16px;right:16px;background:var(--card);border-radius:13px;padding:13px 18px;border-left:4px solid var(--p1);box-shadow:0 6px 20px rgba(0,0,0,.15);font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:8px;z-index:999;max-width:280px}
+.toast.ok{border-left-color:#22c55e}
+.toast.err{border-left-color:#ef4444}
+@media(min-width:520px){.features{grid-template-columns:repeat(3,1fr)}.contact-list{grid-template-columns:1fr 1fr}.footer-inner{grid-template-columns:1.5fr 1fr 1fr 1fr}.fc-brand{grid-column:1/-1;border-bottom:none;padding-bottom:0}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="logo" id="navLogo">E</div>
+  <div><div class="brand-name">Amanda Agent</div><div class="brand-sub" data-i18n="brand_sub">Fashion & Beauty</div></div>
+  <div class="spacer"></div>
+  <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  <button class="icon-btn" onclick="cycleAccent()">🎨</button>
+  <div class="lang-wrap" id="langWrap">
+    <button class="icon-btn" onclick="toggleLangMenu(event)" id="flagBtn">🇬🇧</button>
+    <div class="lang-menu" id="langMenu"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="badge" data-i18n="hero_badge">✨ New fashion stage</div>
+    <h1><span data-i18n="hero_t1">Discover the</span> <span class="hl" data-i18n="hero_t2">Finest Models</span></h1>
+    <p data-i18n="hero_sub">Explore modern products and models made for women on Amanda Agent.</p>
+    <div class="cta">
+      <button class="btn btn-primary" onclick="openAuth('register')">🚀 <span data-i18n="hero_start">Get Started</span></button>
+      <button class="btn btn-ghost" onclick="openAuth('login')">🔑 <span data-i18n="login">Login</span></button>
+      <button class="btn btn-model" onclick="openAuth('apply')">🌟 <span data-i18n="hero_model">Become a Model</span></button>
+    </div>
+    <div class="mini-stats">
+      <div class="m"><strong id="stModels">0</strong><span data-i18n="stat_profiles">Total Profiles</span></div>
+      <div class="m"><strong id="stPhotos">0</strong><span data-i18n="stat_photos">Total Photos</span></div>
+      <div class="m"><strong>24/7</strong><span data-i18n="stat_hours">Working Hours</span></div>
+    </div>
+    <div class="front-photo-section" id="frontPhotoSection" style="display:none">
+      <img id="frontPhotoImg" src="" alt="Amanda Agent">
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="fcard"><div class="ico">💎</div><h3 data-i18n="feat1_t">Verified Models</h3><p data-i18n="feat1_d">Every profile is verified by the owner.</p></div>
+    <div class="fcard"><div class="ico">⚡</div><h3 data-i18n="feat2_t">Instant Contact</h3><p data-i18n="feat2_d">Reach out via Telegram and WhatsApp.</p></div>
+    <div class="fcard"><div class="ico">🌟</div><h3 data-i18n="feat3_t">Become a Model</h3><p data-i18n="feat3_d">Submit your application and get approved.</p></div>
+  </section>
+
+  <section class="contact">
+    <h2 data-i18n="contact_us">Contact Us</h2>
+    <p class="sub" data-i18n="contact_sub">Reach us for any question.</p>
+    <div class="contact-list">
+      <a class="cbox" id="contactTg" href="https://t.me/amandaagent" target="_blank"><div class="ci">✈️</div><div><b>Telegram</b><small id="contactTgLabel">@amandaagent</small></div></a>
+      <a class="cbox" id="contactWa" href="https://wa.me/251900000000" target="_blank"><div class="ci">💬</div><div><b>WhatsApp</b><small id="contactWaLabel">+251...</small></div></a>
+      <a class="cbox" id="contactEmail" href="mailto:info@amandaagent.com"><div class="ci">📧</div><div><b>Email</b><small id="contactEmailLabel">info@amandaagent.com</small></div></a>
+      <div class="cbox"><div class="ci">📍</div><div><b data-i18n="address">Address</b><small id="contactAddressLabel">Addis Ababa</small></div></div>
+    </div>
+  </section>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="fc-brand"><div class="flogo" id="footerLogo">E</div><div><b>Amanda Agent</b><small data-i18n="brand_sub">Fashion & Beauty</small></div></div>
+    <div class="fc-section"><h4 data-i18n="footer_contact">📞 Contact</h4><a id="ftTg" href="https://t.me/amandaagent" target="_blank">✈️ Telegram</a><a id="ftWa" href="https://wa.me/251900000000" target="_blank">💬 WhatsApp</a><a id="ftEmail" href="mailto:info@amandaagent.com">📧 Email</a></div>
+    <div class="fc-section"><h4 data-i18n="footer_address">📍 Address</h4><p id="ftAddress">Addis Ababa</p><p data-i18n="footer_hours">Mon-Sat · 8:00-20:00</p></div>
+    <div class="fc-section"><h4 data-i18n="footer_about">ℹ️ About</h4><p data-i18n="footer_about_text">Amanda Agent — Modern fashion items made for women.</p></div>
+  </div>
+  <div class="footer-bottom"><span data-i18n="footer_rights">© Amanda Agent</span></div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-bg" id="authModal">
+  <div class="modal">
+    <button class="mclose" onclick="closeAuth()">×</button>
+    <div class="modal-logo">E</div>
+    <h3 id="authTitle">Welcome</h3>
+    <p class="msub" id="authSub">Login with username or phone</p>
+    <div class="tabs">
+      <button class="tab on" id="tabLogin" onclick="switchAuth('login')">🔑 Login</button>
+      <button class="tab" id="tabRegister" onclick="switchAuth('register')">✨ Register</button>
+      <button class="tab model" id="tabApply" onclick="switchAuth('apply')">🌟 Model</button>
+    </div>
+    <div class="err" id="authErr"></div>
+    <div class="ok" id="authOk"></div>
+
+    <form id="loginForm" onsubmit="doLogin(event)">
+      <div class="field"><label data-i18n="lbl_username">Username / Phone</label><input class="input" id="loginId" placeholder="username / +2519..."></div>
+      <div class="field"><label data-i18n="lbl_password">Password</label><input class="input" type="password" id="loginPass" placeholder="••••••••"></div>
+      <button class="btn btn-primary btn-block" type="submit">🔓 <span data-i18n="login">Login</span></button>
+      <div class="divider">OR</div>
+      <button type="button" class="btn btn-model btn-block" onclick="switchAuth('loginModel')">🌟 Login as Model</button>
+      <div class="hint">Demo: owner · 123456</div>
+    </form>
+
+    <form id="loginModelForm" style="display:none" onsubmit="doLoginModel(event)">
+      <div class="hint model" style="margin-top:0;margin-bottom:16px">🌟 Approved models only</div>
+      <div class="field"><label>Username / Phone</label><input class="input" id="mlLoginId"></div>
+      <div class="field"><label>Password</label><input class="input" type="password" id="mlLoginPass"></div>
+      <button class="btn btn-model btn-block" type="submit">🌟 Login</button>
+      <button type="button" class="btn btn-ghost btn-block" style="margin-top:8px" onclick="switchAuth('login')">← Back</button>
+    </form>
+
+    <form id="registerForm" style="display:none" onsubmit="doRegister(event)">
+      <div class="field"><label>Full Name</label><input class="input" id="regName"></div>
+      <div class="field"><label>Username</label><input class="input" id="regUsername" placeholder="hanna_style"></div>
+      <div class="field"><label>Phone</label><div class="phone-row"><select class="input" id="regCountry"></select><input class="input" id="regPhone" type="tel" inputmode="numeric"></div></div>
+      <div class="field"><label>Password</label><input class="input" type="password" id="regPass"></div>
+      <div class="field"><label>Confirm Password</label><input class="input" type="password" id="regConfirm"></div>
+      <button class="btn btn-primary btn-block" type="submit">✨ Register</button>
+      <div class="divider">OR</div>
+      <button type="button" class="btn btn-model btn-block" onclick="switchAuth('apply')">🌟 Apply for Model</button>
+    </form>
+
+    <form id="applyForm" style="display:none" onsubmit="doApply(event)">
+      <div class="hint model" style="margin-top:0;margin-bottom:16px">🌟 Only after owner approval</div>
+      <div class="field"><label>Full Name</label><input class="input" id="apName"></div>
+      <div class="row-2">
+        <div class="field"><label>Age</label><input class="input" id="apAge" type="number"></div>
+        <div class="field"><label>Username</label><input class="input" id="apUsername"></div>
+      </div>
+      <div class="field"><label>Phone</label><div class="phone-row"><select class="input" id="apCountry"></select><input class="input" id="apPhone" type="tel" inputmode="numeric"></div></div>
+      <div class="field"><label>Password</label><input class="input" type="password" id="apPass"></div>
+      <div class="field">
+        <label>Photos (2 required)</label>
+        <div class="photo-row">
+          <div class="photo-slot" id="apPhoto1" onclick="document.getElementById('apFile1').click()"><div class="ph">📷<small>Photo 1</small></div></div>
+          <div class="photo-slot" id="apPhoto2" onclick="document.getElementById('apFile2').click()"><div class="ph">📷<small>Photo 2</small></div></div>
+        </div>
+        <input type="file" id="apFile1" accept="image/*" hidden onchange="onApplyPhoto(event,1)">
+        <input type="file" id="apFile2" accept="image/*" hidden onchange="onApplyPhoto(event,2)">
+      </div>
+      <div class="field"><label>Bio (optional)</label><textarea class="input" id="apBio"></textarea></div>
+      <button class="btn btn-model btn-block" type="submit">🌟 Submit Application</button>
+      <button type="button" class="btn btn-ghost btn-block" style="margin-top:8px" onclick="switchAuth('register')">← Back</button>
+    </form>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- shared.js -->
+<script src="shared.js"></script>
+
+<script>
+/* ============================================================
+   Amanda Agent — index.html
+   ============================================================ */
+
+/* ---------- SEED ---------- */
+function initSeed() {
+  var db = loadDB();
+  if (localStorage.getItem('ea_seed_v14')) return;
+
+  var hasOwner = false;
+  for (var i = 0; i < db.users.length; i++) {
+    if (db.users[i].role === 'owner') { hasOwner = true; break; }
+  }
+  if (!hasOwner) {
+    db.users.unshift({
+      id: 'u_owner', name: 'Amanda Owner', username: 'owner',
+      countryCode: '+251', phoneLocal: '900000000', phone: '+251900000000',
+      password: '123456', role: 'owner', status: 'active',
+      avatar: '', createdAt: Date.now()
+    });
+  }
+  if (!db.profiles || db.profiles.length === 0) {
+    db.profiles = [
+      { id: 'p_1', userId: 'u_1', code: 'M-001', name: 'Hanna Tesfaye', age: '22',
+        bio: 'Fashion model', telegram: '@hanna_style', whatsapp: '+251911223344',
+        avatar: '', photos: [], status: 'online', createdAt: Date.now() - 4000 },
+      { id: 'p_2', userId: 'u_2', code: 'M-002', name: 'Marta Alemu', age: '25',
+        bio: 'Women fashion model', telegram: '@marta', whatsapp: '+251922334455',
+        avatar: '', photos: [], status: 'online', createdAt: Date.now() - 3000 }
+    ];
+  }
+  saveDB(db);
+  try { localStorage.setItem('ea_seed_v14', '1'); } catch (e) {}
+}
+
+/* ---------- LANDING STATS ---------- */
+function renderLandingStats() {
+  var db = loadDB();
+  var ph = 0;
+  for (var i = 0; i < db.profiles.length; i++) {
+    ph += (db.profiles[i].photos && db.profiles[i].photos.length) || 0;
+  }
+  var e1 = document.getElementById('stModels');
+  if (e1) e1.textContent = db.profiles.length;
+  var e2 = document.getElementById('stPhotos');
+  if (e2) e2.textContent = ph;
+}
+
+/* ---------- CONTACT INFO ---------- */
+function renderContactInfo() {
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem('ea_settings') || '{}'); } catch (e) {}
+  var tg = (s.telegram || '@amandaagent').replace(/^@/, '');
+  var tgFull = s.telegram || '@amandaagent';
+  var wa = (s.whatsapp || '+251900000000').replace(/[^0-9]/g, '');
+  var waFull = s.whatsapp || '+251900000000';
+  var email = s.email || 'info@amandaagent.com';
+  var address = s.address || 'Addis Ababa';
+
+  var setHref = function(id, href) { var e = document.getElementById(id); if (e) e.href = href; };
+  var setText = function(id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; };
+
+  setHref('contactTg', 'https://t.me/' + tg);
+  setText('contactTgLabel', tgFull);
+  setHref('contactWa', 'https://wa.me/' + wa);
+  setText('contactWaLabel', waFull);
+  setHref('contactEmail', 'mailto:' + email);
+  setText('contactEmailLabel', email);
+  setText('contactAddressLabel', address);
+
+  setHref('ftTg', 'https://t.me/' + tg);
+  setHref('ftWa', 'https://wa.me/' + wa);
+  setHref('ftEmail', 'mailto:' + email);
+  setText('ftAddress', address);
+}
+
+/* ---------- APPLY PHOTOS ---------- */
+var AP_PHOTO1 = '', AP_PHOTO2 = '';
+
+function onApplyPhoto(ev, w) {
+  var f = ev.target.files[0];
+  if (!f) return;
+  readImage(f, 600, function(d) {
+    if (w === 1) AP_PHOTO1 = d; else AP_PHOTO2 = d;
+    renderApplyPhotos();
+  });
+  ev.target.value = '';
+}
+function renderApplyPhotos() {
+  var s1 = document.getElementById('apPhoto1');
+  var s2 = document.getElementById('apPhoto2');
+  if (s1) s1.innerHTML = AP_PHOTO1
+    ? '<img src="' + AP_PHOTO1 + '"><div class="rm" onclick="event.stopPropagation();AP_PHOTO1=\'\';renderApplyPhotos()">×</div>'
+    : '<div class="ph">📷<small>Photo 1</small></div>';
+  if (s2) s2.innerHTML = AP_PHOTO2
+    ? '<img src="' + AP_PHOTO2 + '"><div class="rm" onclick="event.stopPropagation();AP_PHOTO2=\'\';renderApplyPhotos()">×</div>'
+    : '<div class="ph">📷<small>Photo 2</small></div>';
+}
+
+/* ---------- AUTH MODAL ---------- */
+function openAuth(tab) {
+  document.getElementById('authModal').classList.add('show');
+  switchAuth(tab || 'login');
+  document.getElementById('authErr').classList.remove('show');
+  document.getElementById('authOk').classList.remove('show');
+}
+function closeAuth() {
+  document.getElementById('authModal').classList.remove('show');
+  ['loginForm', 'loginModelForm', 'registerForm', 'applyForm'].forEach(function(id) {
+    var f = document.getElementById(id);
+    if (f) f.reset();
+  });
+  AP_PHOTO1 = ''; AP_PHOTO2 = '';
+  renderApplyPhotos();
+}
+function switchAuth(tab) {
+  var forms = { login: 'loginForm', loginModel: 'loginModelForm', register: 'registerForm', apply: 'applyForm' };
+  for (var k in forms) {
+    var f = document.getElementById(forms[k]);
+    if (f) f.style.display = (k === tab) ? 'block' : 'none';
+  }
+  document.getElementById('tabLogin').classList.toggle('on', tab === 'login' || tab === 'loginModel');
+  document.getElementById('tabRegister').classList.toggle('on', tab === 'register');
+  document.getElementById('tabApply').classList.toggle('on', tab === 'apply');
+
+  var t = document.getElementById('authTitle');
+  var s = document.getElementById('authSub');
+  if (tab === 'login') { t.textContent = 'Welcome Back'; s.textContent = 'Login with username or phone'; }
+  else if (tab === 'loginModel') { t.textContent = '🌟 Model Login'; s.textContent = 'Approved models only'; }
+  else if (tab === 'register') { t.textContent = 'Create Account'; s.textContent = 'Full name, username and phone'; }
+  else { t.textContent = '🌟 Apply for Model'; s.textContent = 'Submit your application'; }
+  document.getElementById('authErr').classList.remove('show');
+  document.getElementById('authOk').classList.remove('show');
+}
+function showErr(m) {
+  var e = document.getElementById('authErr');
+  e.textContent = m; e.classList.add('show');
+  document.getElementById('authOk').classList.remove('show');
+}
+function showOk(m) {
+  var e = document.getElementById('authOk');
+  e.textContent = m; e.classList.add('show');
+  document.getElementById('authErr').classList.remove('show');
+}
+
+/* ---------- LOGIN ---------- */
+function doLogin(ev) {
+  ev.preventDefault();
+  var id = document.getElementById('loginId').value.trim();
+  var pass = document.getElementById('loginPass').value;
+  if (!id || !pass) { showErr('Fill all fields'); return; }
+  var u = findUser(id);
+  if (!u) { showErr('User not found'); return; }
+  if (u.password !== pass) { showErr('Wrong password'); return; }
+
+  if (u.role === 'model') {
+    if (u.status === 'pending') { showErr('Pending approval'); return; }
+    if (u.status === 'rejected') { showErr('Rejected'); return; }
+    if (u.status !== 'approved') { showErr('Cannot login'); return; }
+    saveSession(u);
+    toast('Welcome', 'ok');
+    setTimeout(function() { goTo('model.html'); }, 700);
+    return;
+  }
+  saveSession(u);
+  toast('Welcome', 'ok');
+  setTimeout(function() {
+    goTo(u.role === 'owner' ? 'owner.html' : 'user.html');
+  }, 700);
+}
+function doLoginModel(ev) {
+  ev.preventDefault();
+  var id = document.getElementById('mlLoginId').value.trim();
+  var pass = document.getElementById('mlLoginPass').value;
+  if (!id || !pass) { showErr('Fill all fields'); return; }
+  var u = findUser(id);
+  if (!u) { showErr('User not found'); return; }
+  if (u.password !== pass) { showErr('Wrong password'); return; }
+  if (u.role !== 'model') { showErr('Not a model'); return; }
+  if (u.status === 'pending') { showErr('Pending approval'); return; }
+  if (u.status === 'rejected') { showErr('Rejected'); return; }
+  if (u.status !== 'approved') { showErr('Cannot login'); return; }
+  saveSession(u);
+  toast('Welcome', 'ok');
+  setTimeout(function() { goTo('model.html'); }, 700);
+}
+
+/* ---------- REGISTER ---------- */
+function doRegister(ev) {
+  ev.preventDefault();
+  var name = document.getElementById('regName').value.trim();
+  var username = document.getElementById('regUsername').value.trim().toLowerCase();
+  var cc = document.getElementById('regCountry').value;
+  var pl = onlyDigits(document.getElementById('regPhone').value.trim());
+  var pass = document.getElementById('regPass').value;
+  var conf = document.getElementById('regConfirm').value;
+
+  if (!name || !username || !pl || !pass || !conf) { showErr('Fill all fields'); return; }
+  if (!/^[a-z0-9_]{3,20}$/.test(username)) { showErr('Username 3-20 (a-z 0-9 _)'); return; }
+  if (!/^[0-9]{6,15}$/.test(pl)) { showErr('Phone invalid'); return; }
+  if (pass.length < 6) { showErr('Password 6+ chars'); return; }
+  if (pass !== conf) { showErr('Passwords do not match'); return; }
+
+  var db = loadDB();
+  for (var i = 0; i < db.users.length; i++) {
+    if (db.users[i].username && db.users[i].username.toLowerCase() === username) { showErr('Username taken'); return; }
+  }
+  var fp = cc + pl;
+  for (var j = 0; j < db.users.length; j++) {
+    if (db.users[j].phone && onlyDigits(db.users[j].phone) === onlyDigits(fp)) { showErr('Phone registered'); return; }
+  }
+
+  var u = {
+    id: uid('u'), name: name, username: username,
+    countryCode: cc, phoneLocal: pl, phone: fp,
+    password: pass, role: 'viewer', status: 'active',
+    avatar: '', createdAt: Date.now()
+  };
+  db.users.push(u);
+  saveDB(db);
+  saveSession(u);
+  toast('Registered!', 'ok');
+  setTimeout(function() { goTo('user.html'); }, 700);
+}
+
+/* ---------- APPLY ---------- */
+function doApply(ev) {
+  ev.preventDefault();
+  var name = document.getElementById('apName').value.trim();
+  var age = document.getElementById('apAge').value.trim();
+  var username = document.getElementById('apUsername').value.trim().toLowerCase();
+  var cc = document.getElementById('apCountry').value;
+  var pl = onlyDigits(document.getElementById('apPhone').value.trim());
+  var pass = document.getElementById('apPass').value;
+  var bio = document.getElementById('apBio').value.trim();
+
+  if (!name || !age || !username || !pl || !pass) { showErr('Fill all fields'); return; }
+  if (!AP_PHOTO1 || !AP_PHOTO2) { showErr('2 photos required'); return; }
+  if (!/^[a-z0-9_]{3,20}$/.test(username)) { showErr('Username 3-20'); return; }
+  if (!/^[0-9]{6,15}$/.test(pl)) { showErr('Phone invalid'); return; }
+  if (pass.length < 6) { showErr('Password 6+ chars'); return; }
+  var a = parseInt(age);
+  if (!a || a < 16 || a > 80) { showErr('Age 16-80'); return; }
+
+  var db = loadDB();
+  for (var i = 0; i < db.users.length; i++) {
+    if (db.users[i].username && db.users[i].username.toLowerCase() === username) { showErr('Username taken'); return; }
+  }
+  var fp = cc + pl;
+  for (var j = 0; j < db.users.length; j++) {
+    if (db.users[j].phone && onlyDigits(db.users[j].phone) === onlyDigits(fp)) { showErr('Phone registered'); return; }
+  }
+
+  var m = {
+    id: uid('m'), name: name, username: username,
+    countryCode: cc, phoneLocal: pl, phone: fp,
+    password: pass, role: 'model', status: 'pending',
+    age: age, bio: bio, avatar: AP_PHOTO1, photos: [AP_PHOTO2],
+    telegram: '', whatsapp: '',
+    appliedAt: Date.now(), createdAt: Date.now()
+  };
+  db.users.push(m);
+  saveDB(db);
+
+  AP_PHOTO1 = ''; AP_PHOTO2 = '';
+  renderApplyPhotos();
+  document.getElementById('applyForm').reset();
+  showOk('✅ Application submitted!\nOwner will review soon.');
+  setTimeout(function() { switchAuth('loginModel'); }, 3000);
+}
+
+/* ---------- EVENTS ---------- */
+document.getElementById('authModal').addEventListener('click', function(e) {
+  if (e.target.id === 'authModal') closeAuth();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAuth();
+});
+
+/* ---------- INIT ---------- */
+(function initIndex() {
+    initSeed();
+    populateCountries();
+  renderApplyPhotos();
+  renderLandingStats();
+  renderContactInfo();
+
+  /* Firebase ready callback */
+  window.onFirebaseReady = function() {
+    renderLandingStats();
+    renderContactInfo();
+    if (typeof applyFrontPhoto === 'function') applyFrontPhoto();
+  };
+
+  /* Request notifications */
+  setTimeout(function() {
+    if (typeof requestNotifPermission === 'function') requestNotifPermission();
+  }, 3000);
+
+  /* Auto-redirect if logged in */
+  try { localStorage.removeItem('ea_current_ls'); } catch (e) {}
+  var sessionId = null;
+  try { sessionId = sessionStorage.getItem('ea_current'); } catch (e) {}
+
+  if (sessionId) {
+    var db = loadDB();
+    var u = null;
+    for (var i = 0; i < db.users.length; i++) {
+      if (db.users[i].id === sessionId) { u = db.users[i]; break; }
+    }
+    if (u && u.status !== 'pending' && u.status !== 'rejected') {
+      setTimeout(function() {
+        if (u.role === 'owner') goTo('owner.html');
+        else if (u.role === 'model') goTo('model.html');
+        else goTo('user.html');
+      }, 400);
+    } else {
+      try { sessionStorage.removeItem('ea_current'); } catch (e) {}
+    }
+  }
+
+  try { console.log('[Index] Ready.'); } catch (e) {}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Amanda — User</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p1:#e8386d;--p2:#8b2fc9;--bg:#fdf7fa;--card:#fff;--ink:#2a1a24;--muted:#8a7680;--line:#f2e3eb}
+[data-theme="dark"]{--bg:#150810;--card:#221320;--ink:#f6ecf2;--muted:#9d8795;--line:#3a2036}
+[data-accent="blue"]{--p1:#2563eb;--p2:#0ea5e9}
+[data-accent="green"]{--p1:#10b981;--p2:#059669}
+[data-accent="gold"]{--p1:#c79a2a;--p2:#e6c25c}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;padding-bottom:120px}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:15px;color:inherit}
+a{color:inherit;text-decoration:none}
+.nav{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;flex-wrap:wrap}
+.logo{width:54px;height:54px;border-radius:50%;overflow:hidden;background:#FBFBF9;border:2px solid var(--line);display:grid;place-items:center;font-weight:800;color:#e8386d;font-size:20px;box-shadow:0 4px 12px rgba(232,56,109,.12);flex-shrink:0}
+.logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.brand-name{font-weight:800;font-size:15px}
+.brand-sub{font-size:9px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase}
+.spacer{flex:1}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;font-size:15px;position:relative}
+.icon-btn:hover{border-color:var(--p1)}
+.lang-wrap,.notif-wrap{position:relative}
+.lang-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:180px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.15);padding:6px;display:none;z-index:90}
+.lang-wrap.open .lang-menu{display:block}
+.lang-item{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:10px;font-size:13.5px;text-align:left;cursor:pointer;color:var(--ink)}
+.lang-item.on{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:9px;font-weight:800;min-width:17px;height:17px;border-radius:10px;display:grid;place-items:center;padding:0 4px;border:2px solid var(--card)}
+.notif-menu{position:absolute;top:calc(100% + 8px);right:0;width:320px;max-width:92vw;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.18);overflow:hidden;display:none;z-index:95}
+.notif-wrap.open .notif-menu{display:block}
+.notif-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
+.notif-head b{font-size:13.5px;font-weight:700}
+.notif-head button{font-size:11px;color:var(--p1);font-weight:600}
+.notif-list{max-height:360px;overflow-y:auto;padding:6px}
+.notif-item{display:flex;gap:11px;padding:11px 12px;border-radius:11px;cursor:pointer;width:100%;text-align:left;background:none;font-family:inherit;color:var(--ink);border:none}
+.notif-item.unread{background:rgba(232,56,109,.05)}
+.notif-item .n-ic{width:38px;height:38px;border-radius:11px;background:rgba(232,56,109,.1);display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.notif-item .n-body{flex:1;min-width:0}
+.notif-item .n-body b{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+.notif-item .n-body p{font-size:12px;color:var(--muted)}
+.notif-item .n-body small{font-size:10.5px;color:var(--muted);display:block;margin-top:3px}
+.notif-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.user-menu-wrap{position:relative}
+.user-chip{display:flex;align-items:center;gap:7px;padding:4px 11px 4px 4px;border-radius:100px;background:var(--bg);border:1.5px solid var(--line);cursor:pointer}
+.user-chip .av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;overflow:hidden}
+.user-chip .av img{width:100%;height:100%;object-fit:cover}
+.user-chip b{font-size:12.5px;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.15);padding:6px;display:none;z-index:90}
+.user-menu-wrap.open .user-menu{display:block}
+.um-head{padding:12px 14px;border-bottom:1px solid var(--line);margin-bottom:4px;display:flex;gap:10px;align-items:center}
+.um-head .av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;color:#fff;font-weight:700;font-size:17px;overflow:hidden;flex-shrink:0}
+.um-head .av img{width:100%;height:100%;object-fit:cover}
+.um-head b{font-size:14px;font-weight:700;display:block;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.um-head small{font-size:11px;color:var(--muted);display:block;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.um-item{display:flex;align-items:center;gap:11px;width:100%;padding:11px 14px;border-radius:10px;font-size:13.5px;font-weight:500;text-align:left;cursor:pointer}
+.um-item:hover{background:rgba(232,56,109,.08);color:var(--p1)}
+.um-item.danger{color:#d92e5c}
+.wrap{max-width:900px;margin:0 auto;padding:16px 14px 30px}
+.hero{background:linear-gradient(135deg,var(--p1),var(--p2));background-size:cover;background-position:center;color:#fff;border-radius:20px;padding:22px 20px;margin-bottom:18px;position:relative;overflow:hidden}
+.hero.has-cover::before{content:'';position:absolute;inset:0;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:1}
+.hero.has-cover>*{position:relative;z-index:2}
+.hero.has-cover h1,.hero.has-cover p{text-shadow:0 2px 10px rgba(0,0,0,.6),0 0 20px rgba(0,0,0,.3)}
+.hero.has-cover .uinfo{background:rgba(0,0,0,.25);backdrop-filter:blur(10px);text-shadow:none}
+.hero .lock-badge{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);padding:4px 10px;border-radius:100px;font-size:10.5px;font-weight:600;border:1px solid rgba(255,255,255,.2);z-index:3}
+.hero h1{font-size:20px;font-weight:800;margin-bottom:6px}
+.hero p{opacity:.9;font-size:13.5px}
+.hero .uinfo{display:flex;align-items:center;gap:10px;margin-top:14px;background:rgba(255,255,255,.15);padding:10px 14px;border-radius:100px;width:fit-content;max-width:100%}
+.hero .uinfo .uav{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.28);display:grid;place-items:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden}
+.hero .uinfo .uav img{width:100%;height:100%;object-fit:cover}
+.hero .uinfo b{display:block;font-size:13px}
+.hero .uinfo small{font-size:11px;opacity:.8}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--line);cursor:pointer}
+.stat.on{border-color:var(--p1);background:rgba(232,56,109,.05)}
+.stat .si{font-size:18px;margin-bottom:4px}
+.stat b{font-size:22px;font-weight:800;display:block;line-height:1.1;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:11.5px;color:var(--muted)}
+.tabs{display:flex;gap:6px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px;overflow-x:auto}
+.tab{padding:8px 14px;border-radius:9px;font-weight:600;font-size:12.5px;color:var(--muted);white-space:nowrap;display:flex;align-items:center;gap:6px;cursor:pointer}
+.tab.on{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff}
+.tab .cnt{background:rgba(0,0,0,.08);padding:1px 6px;border-radius:6px;font-size:10.5px;font-weight:700}
+.tab.on .cnt{background:rgba(255,255,255,.28)}
+.toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.search-box{position:relative;flex:1;min-width:180px}
+.search-box input{width:100%;padding:11px 14px 11px 40px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-size:14px;outline:none;color:var(--ink)}
+.search-box .si{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pcard{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--line);cursor:pointer}
+.pcard-cover{position:relative;aspect-ratio:1;overflow:hidden;background:linear-gradient(135deg,var(--p1),var(--p2))}
+.pcard-cover img{width:100%;height:100%;object-fit:cover}
+.pcard-cover .noav{width:100%;height:100%;display:grid;place-items:center;color:#fff;font-size:42px;font-weight:800}
+.pcard-cover .fav{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;font-size:15px;cursor:pointer}
+.pcard-cover .fav.on{background:var(--p1);color:#fff}
+.pcard-cover .code-tag{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:7px;letter-spacing:0.5px}
+.pcard-body{padding:11px 12px;flex:1;display:flex;flex-direction:column}
+.pcard-body h4{font-size:14px;font-weight:700;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcard-body .meta{font-size:11px;color:var(--muted);margin-bottom:6px}
+.pcard-body .btn{width:100%;padding:8px;border-radius:10px;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;font-size:12px;font-weight:600;margin-top:auto;cursor:pointer}
+.stars-row{display:inline-flex;gap:2px}
+.star{font-size:14px;color:#d1d5db;line-height:1}
+.star.filled{color:#f59e0b}
+.rating-meta{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);margin-bottom:8px}
+.rating-meta .avg{color:#f59e0b;font-weight:700}
+.empty{grid-column:1/-1;text-align:center;padding:50px 20px;background:var(--card);border-radius:16px;border:2px dashed var(--line);color:var(--muted)}
+.empty .ei{font-size:42px;margin-bottom:10px;opacity:.5}
+.empty h3{font-size:16px;color:var(--ink);margin-bottom:6px}
+.empty p{font-size:12.5px;color:var(--muted);margin-top:6px}
+.profile-view,.support-view{display:none}
+.profile-view.on,.support-view.on{display:block}
+.browse-view.off{display:none}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:11px;background:var(--card);border:1.5px solid var(--line);font-size:13px;font-weight:600;margin-bottom:14px;cursor:pointer}
+.prof-hero{background:var(--card);border-radius:20px;padding:26px 20px;border:1px solid var(--line);text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
+.prof-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:90px;background:linear-gradient(135deg,var(--p1),var(--p2));opacity:.14}
+.prof-av{width:100px;height:100px;border-radius:50%;margin:0 auto 14px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;color:#fff;font-size:36px;font-weight:800;border:4px solid var(--card);z-index:2}
+.prof-av img{width:100%;height:100%;object-fit:cover}
+.prof-hero h1{font-size:22px;font-weight:800;position:relative;z-index:2;margin-bottom:10px}
+.prof-badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2}
+.badge{padding:5px 12px;border-radius:100px;font-size:11px;font-weight:600;background:rgba(232,56,109,.1);color:var(--p1);border:1px solid rgba(232,56,109,.25)}
+.badge.code{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;border-color:transparent;letter-spacing:0.5px}
+.prof-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.act-btn{flex:1;min-width:120px;padding:11px;border-radius:12px;font-weight:600;font-size:13px;border:1.5px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.act-btn.on{background:var(--p1);color:#fff;border-color:var(--p1)}
+.act-btn.tg{background:linear-gradient(135deg,#2aabee,#229ed9);color:#fff;border-color:transparent}
+.act-btn.wa{background:linear-gradient(135deg,#4ade80,#22c55e);color:#fff;border-color:transparent}
+.act-btn.fast{background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;border-color:transparent}
+.prof-body{background:var(--card);border-radius:18px;padding:18px;border:1px solid var(--line);margin-bottom:12px}
+.prof-body h2{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.prof-body h2 .dash{width:4px;height:18px;border-radius:3px;background:linear-gradient(135deg,var(--p1),var(--p2))}
+.prof-body p{color:var(--muted);font-size:14px;line-height:1.8;white-space:pre-line}
+.gallery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.gitem{aspect-ratio:1;border-radius:12px;overflow:hidden;cursor:pointer;background:var(--line)}
+.gitem img{width:100%;height:100%;object-fit:cover}
+.avg-rating-box{display:flex;align-items:center;gap:14px;padding:14px;background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(232,56,109,.08));border-radius:14px;margin-bottom:14px;border:1px solid rgba(245,158,11,.3)}
+.avg-rating-box .big-num{font-size:36px;font-weight:800;color:#f59e0b;line-height:1;min-width:60px;text-align:center}
+.rate-form{background:var(--bg);border-radius:14px;padding:14px;border:1px solid var(--line);margin-bottom:14px}
+.rate-form .rate-title{font-size:13px;font-weight:700;margin-bottom:10px}
+.star-select{display:flex;gap:6px;justify-content:center;padding:10px;margin-bottom:10px;background:var(--card);border-radius:12px}
+.star-select .star{font-size:32px;cursor:pointer;color:#d1d5db;user-select:none}
+.star-select .star.filled{color:#f59e0b}
+.rate-textarea{width:100%;padding:11px 14px;border-radius:11px;border:1.5px solid var(--line);background:var(--card);font-size:13.5px;outline:none;color:var(--ink);resize:vertical;min-height:70px;font-family:inherit;margin-bottom:10px}
+.rate-btns{display:flex;gap:8px}
+.rate-btns .btn{flex:1}
+.rating-item{padding:11px;background:var(--bg);border-radius:11px;border:1px solid var(--line);margin-bottom:8px}
+.rating-item-head{display:flex;justify-content:space-between;gap:8px;margin-bottom:4px}
+.rating-item-head b{font-size:13px;font-weight:700}
+.rating-item-head span{font-size:11px;color:var(--muted)}
+.rating-item-text{font-size:12.5px;color:var(--muted);line-height:1.6;white-space:pre-line}
+.rating-item-stars{margin-bottom:4px}
+.support-header{background:var(--card);border-radius:18px;border:1px solid var(--line);padding:14px;margin-bottom:14px}
+.support-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stab{padding:16px 12px;border-radius:14px;border:2px solid var(--line);background:var(--bg);display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;position:relative}
+.stab.on{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;border-color:transparent}
+.stab .stic{font-size:26px}
+.stab .stsub{font-size:10.5px;font-weight:500;opacity:.8}
+.support-content{background:var(--card);border-radius:18px;border:1px solid var(--line);overflow:hidden;min-height:400px}
+.support-content-header{padding:14px 18px;border-bottom:1px solid var(--line);background:var(--bg);display:flex;align-items:center;gap:10px}
+.support-content-header b{font-size:14px;font-weight:700}
+.support-content-header small{font-size:11.5px;color:var(--muted);margin-left:auto}
+.model-convos{padding:10px;display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 400px);overflow-y:auto}
+.mc-item{display:flex;gap:12px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);cursor:pointer;align-items:center}
+.mc-av{width:48px;height:48px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;color:#fff;font-weight:700;font-size:17px;flex-shrink:0}
+.mc-av img{width:100%;height:100%;object-fit:cover}
+.mc-info{flex:1;min-width:0}
+.mc-info b{font-size:14px;font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px}
+.mc-info .mccode{font-size:10.5px;color:var(--p1);font-weight:800;background:rgba(232,56,109,.1);padding:1px 6px;border-radius:5px;margin-right:5px}
+.mc-info p{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.mc-meta small{font-size:10.5px;color:var(--muted)}
+.chat-container{background:var(--card);border-radius:0;display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:420px}
+.chat-header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;background:var(--card)}
+.chat-header .ch-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));display:grid;place-items:center;color:#fff;font-weight:700;font-size:17px;flex-shrink:0;overflow:hidden}
+.chat-header .ch-av img{width:100%;height:100%;object-fit:cover}
+.chat-header .ch-back{width:36px;height:36px;border-radius:10px;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;font-size:15px;cursor:pointer;color:var(--ink)}
+.chat-header .ch-info b{display:block;font-size:15px;font-weight:700}
+.chat-header .ch-info small{font-size:11.5px;color:var(--muted);display:block}
+.chat-body{flex:1;overflow-y:auto;padding:18px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.chat-bubble{max-width:78%;padding:11px 14px 22px;border-radius:16px;font-size:13.5px;line-height:1.5;word-wrap:break-word;position:relative}
+.chat-bubble.me{align-self:flex-end;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;border-bottom-right-radius:4px}
+.chat-bubble.them{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+.chat-bubble.about-model{align-self:center;background:rgba(168,85,247,.1);border:1px dashed rgba(168,85,247,.4);color:#a855f7;font-size:11.5px;font-weight:700;padding:6px 14px;border-radius:100px;max-width:none}
+.chat-bubble .meta{position:absolute;bottom:5px;right:10px;font-size:9.5px;display:flex;align-items:center;gap:3px;opacity:.75}
+.chat-bubble img.chat-img{max-width:100%;max-height:260px;border-radius:10px;display:block;cursor:pointer;margin-bottom:4px;object-fit:cover}
+.chat-bubble.me img.chat-img{border:2px solid rgba(255,255,255,.3)}
+.chat-bubble.them img.chat-img{border:1px solid var(--line)}
+.chat-input-wrap{display:flex;gap:8px;align-items:flex-end;padding:12px;border-top:1px solid var(--line);background:var(--card)}
+.chat-input-wrap textarea{flex:1;padding:11px 15px;border-radius:20px;border:1.5px solid var(--line);background:var(--bg);font-size:14px;outline:none;resize:none;min-height:44px;max-height:110px;line-height:1.4;color:var(--ink);font-family:inherit}
+.chat-input-wrap .emoji-btn{width:44px;height:44px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);font-size:20px;display:grid;place-items:center;cursor:pointer;flex-shrink:0}
+.chat-input-wrap .send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;font-size:18px;display:grid;place-items:center;flex-shrink:0;cursor:pointer;border:none}
+.emoji-wrap{position:relative;flex-shrink:0}
+.emoji-panel{position:absolute;bottom:calc(100% + 8px);right:0;width:280px;max-width:90vw;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:10px;display:none;z-index:100;max-height:220px;overflow-y:auto}
+.emoji-panel.show{display:block}
+.emoji-panel .em-title{font-size:10.5px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+.emoji-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px}
+.emoji-grid button{font-size:20px;padding:6px;border-radius:8px;cursor:pointer;background:none;border:none;line-height:1}
+.modal-bg{position:fixed;inset:0;background:rgba(20,8,16,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:200;overflow-y:auto}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);border-radius:22px;width:100%;max-width:440px;padding:26px 20px;position:relative;max-height:95vh;overflow-y:auto;margin:auto}
+.mclose{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(232,56,109,.1);color:var(--muted);font-size:20px;display:grid;place-items:center;cursor:pointer}
+.modal h3{font-size:20px;font-weight:800;margin-bottom:4px;text-align:center}
+.modal .msub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.input{width:100%;padding:11px 14px;border-radius:11px;border:1.5px solid var(--line);background:var(--bg);font-size:14.5px;outline:none;color:var(--ink)}
+textarea.input{resize:vertical;min-height:90px;font-family:inherit;line-height:1.6}
+.phone-row{display:flex;gap:8px}
+.phone-row select{max-width:118px;font-size:13px}
+.phone-row .input{flex:1;min-width:0}
+select.input{cursor:pointer;padding-right:32px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a7680' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.avatar-edit{width:88px;height:88px;border-radius:50%;background:rgba(232,56,109,.1);border:2px dashed rgba(232,56,109,.4);display:grid;place-items:center;cursor:pointer;overflow:hidden;margin:0 auto 18px}
+.avatar-edit img{width:100%;height:100%;object-fit:cover}
+.avatar-edit .ph{font-size:30px;opacity:.55}
+.err{background:#fff0f3;color:#c9224f;padding:10px 13px;border-radius:10px;font-size:12.5px;margin-bottom:14px;border:1px solid #ffd4de;display:none}
+.err.show{display:block}
+.ok{background:#f0fdf4;color:#15803d;padding:10px 13px;border-radius:10px;font-size:12.5px;margin-bottom:14px;border:1px solid #bbf7d0;display:none}
+.ok.show{display:block}
+.btn{padding:11px 20px;border-radius:11px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff}
+.btn-ghost{background:var(--card);border:1.5px solid var(--line);color:var(--ink)}
+.btn-block{width:100%}
+.section-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px;color:var(--muted);font-size:11.5px;text-transform:uppercase;font-weight:700}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--line)}
+.pwd-toggle-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:13px 15px;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink)}
+.pwd-section{display:none;margin-top:12px;padding:14px;background:var(--bg);border-radius:12px;border:1px solid var(--line)}
+.pwd-section.show{display:block}
+.bottom-nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:2px;padding:6px;background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.6);border-radius:100px;box-shadow:0 10px 40px rgba(140,50,110,.2);z-index:80;max-width:calc(100vw - 20px)}
+[data-theme="dark"] .bottom-nav{background:rgba(40,20,40,.9);border-color:rgba(255,255,255,.1)}
+.bnav-btn{padding:10px 14px;border-radius:100px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;min-width:56px}
+.bnav-btn .bi{font-size:18px}
+.bnav-btn.on{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff}
+.site-footer{background:var(--card);border-top:1px solid var(--line);margin-top:30px;padding:32px 16px 18px}
+.footer-inner{max-width:900px;margin:0 auto;display:grid;gap:24px}
+.fc-brand{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.fc-brand .flogo{width:44px;height:44px;border-radius:50%;background:#FBFBF9;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:#e8386d;font-size:18px;overflow:hidden;flex-shrink:0}
+.fc-brand .flogo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.fc-brand b{display:block;font-size:16px;font-weight:800}
+.fc-brand small{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.fc-section h4{font-size:13px;font-weight:700;margin-bottom:10px}
+.fc-section a,.fc-section p{display:block;font-size:13px;color:var(--muted);padding:5px 0}
+.footer-bottom{text-align:center;color:var(--muted);font-size:11.5px;padding-top:18px;margin-top:18px;border-top:1px solid var(--line)}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.lightbox.show{display:flex}
+.lightbox img{max-width:96vw;max-height:85vh;border-radius:14px}
+.lightbox .close{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:22px;display:grid;place-items:center;cursor:pointer;border:none}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr 1fr}.stats{grid-template-columns:1fr 1fr 1fr 1fr}.footer-inner{grid-template-columns:1.5fr 1fr 1fr 1fr}.fc-brand{grid-column:1/-1;border-bottom:none;padding-bottom:0}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="logo" id="navLogo">E</div>
+  <div><div class="brand-name">Amanda Agent</div><div class="brand-sub" data-i18n="brand_sub">Fashion & Beauty</div></div>
+  <div class="spacer"></div>
+  <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+  <button class="icon-btn" onclick="cycleAccent()">🎨</button>
+  <div class="lang-wrap" id="langWrap"><button class="icon-btn" onclick="toggleLangMenu(event)" id="flagBtn">🇬🇧</button><div class="lang-menu" id="langMenu"></div></div>
+  <div class="notif-wrap" id="notifWrap">
+    <button class="icon-btn" onclick="toggleNotifMenu(event)">🔔<span class="notif-badge" id="notifBadge" style="display:none">0</span></button>
+    <div class="notif-menu">
+      <div class="notif-head"><b data-i18n="notif_t">🔔 Notifications</b><button onclick="markAllRead()" data-i18n="notif_read">Mark all read</button></div>
+      <div class="notif-list" id="notifList"></div>
+    </div>
+  </div>
+  <div class="user-menu-wrap" id="userMenuWrap">
+    <div class="user-chip" onclick="toggleUserMenu(event)"><div class="av" id="navAv">U</div><b id="navName">User</b></div>
+    <div class="user-menu">
+      <div class="um-head"><div class="av" id="umAv">U</div><div style="min-width:0"><b id="umName">User</b><small id="umHandle">@demo</small></div></div>
+      <button class="um-item" onclick="event.stopPropagation();closeUserMenu();openUserEdit()"><span>✏️</span><span data-i18n="menu_edit">Edit My Profile</span></button>
+      <button class="um-item" onclick="event.stopPropagation();closeUserMenu();openSupportView('support')"><span>💬</span><span data-i18n="menu_chat">Chat with Owner</span></button>
+      <button class="um-item danger" onclick="event.stopPropagation();closeUserMenu();logout()"><span>⏻</span><span data-i18n="menu_logout">Logout</span></button>
+    </div>
+  </div>
+</header>
+
+<!-- BROWSE -->
+<div class="browse-view" id="browseView">
+<div class="wrap">
+  <div class="hero" id="heroBanner">
+    <div class="lock-badge" data-i18n="view_only">🔒 View Only</div>
+    <h1><span data-i18n="welcome">Welcome</span>, <span id="uName">User</span> 👋</h1>
+    <p data-i18n="welcome_sub">Browse modern models</p>
+    <div class="uinfo"><div class="uav" id="uAv">U</div><div style="min-width:0"><b id="uName2">User</b><small id="uHandle">@demo</small></div></div>
+  </div>
+  <div class="stats">
+    <div class="stat on" id="statAll" onclick="setFilter('all')"><div class="si">👥</div><b id="stAll">0</b><span data-i18n="st_all">All</span></div>
+    <div class="stat" id="statFav" onclick="setFilter('fav')"><div class="si">❤️</div><b id="stFav">0</b><span data-i18n="st_favorites">Favorites</span></div>
+    <div class="stat" id="statRecent" onclick="setFilter('recent')"><div class="si">🕐</div><b id="stRecent">0</b><span data-i18n="st_recent">Recently Viewed</span></div>
+    <div class="stat" onclick="setFilter('all')"><div class="si">🖼️</div><b id="stPhotos">0</b><span data-i18n="st_photos3">Photos</span></div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" id="tabAll" onclick="setFilter('all')"><span>👥</span><span data-i18n="tab_all">All</span><span class="cnt" id="cntAll">0</span></button>
+    <button class="tab" id="tabFav" onclick="setFilter('fav')"><span>❤️</span><span data-i18n="tab_favorites">Favorites</span><span class="cnt" id="cntFav">0</span></button>
+    <button class="tab" id="tabRecent" onclick="setFilter('recent')"><span>🕐</span><span data-i18n="tab_recent">Recently Viewed</span><span class="cnt" id="cntRecent">0</span></button>
+  </div>
+  <div class="toolbar">
+    <div class="search-box"><span class="si">🔍</span><input id="searchInput" data-i18n-ph="search_model" placeholder="Search a model..." oninput="render()"></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+</div>
+
+<!-- PROFILE VIEW -->
+<div class="profile-view" id="profileView">
+<div class="wrap">
+  <button class="back-btn" onclick="backToBrowse()" data-i18n="btn_back">← Back</button>
+  <div id="profileContent"></div>
+</div>
+</div>
+
+<!-- SUPPORT -->
+<div class="support-view" id="supportView">
+<div class="wrap">
+  <button class="back-btn" onclick="backToBrowse()" data-i18n="btn_back">← Back</button>
+  <div class="support-header">
+    <div class="support-tabs">
+      <button class="stab on" id="stabFT" onclick="setSupportTab('fasttext')"><span class="stic">💬</span><span data-i18n="support_tab_ft">💬 Fast Text</span><span class="stsub" data-i18n="support_ft_sub">With models</span></button>
+      <button class="stab" id="stabSup" onclick="setSupportTab('support')"><span class="stic">🎧</span><span data-i18n="support_tab_sup">🎧 Support</span><span class="stsub" data-i18n="support_sup_sub">With owner</span></button>
+    </div>
+  </div>
+  <div class="support-content">
+    <div id="supportFTContent">
+      <div class="support-content-header"><b data-i18n="support_ft_title">💬 Chat with Models</b><small data-i18n="support_ft_list">List</small></div>
+      <div class="model-convos" id="modelConvos"></div>
+    </div>
+    <div id="supportSupContent" style="display:none">
+      <div class="chat-container">
+        <div class="chat-header"><div class="ch-av">👑</div><div class="ch-info"><b>Amanda Owner</b><small>@amandaagent</small><small id="chatTyping" style="color:var(--p1);font-weight:700;display:none">✍️ typing...</small></div></div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="chat-input-wrap">
+          <div class="emoji-wrap"><button class="emoji-btn" onclick="toggleEmoji(event,'owner')">😊</button><div class="emoji-panel" id="emojiPanelOwner"></div></div>
+          <button class="emoji-btn" onclick="document.getElementById('chatImgFile').click()">📷</button>
+          <input type="file" id="chatImgFile" accept="image/*" hidden onchange="onChatImagePick(event)">
+          <textarea id="chatInput" data-i18n-ph="chat_placeholder" placeholder="Type a message..." oninput="onTyping()" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatToOwner()}"></textarea>
+          <button class="send-btn" onclick="sendChatToOwner()">📤</button>
+        </div>
+      </div>
+    </div>
+    <div id="supportSingleConv" style="display:none">
+      <div class="chat-container">
+        <div class="chat-header"><button class="ch-back" onclick="backToModelList()">←</button><div class="ch-av" id="modelConvAv">M</div><div class="ch-info"><b id="modelConvName">Model</b><small id="modelConvCode">Fast Text</small></div></div>
+        <div class="chat-body" id="modelConvBody"></div>
+        <div class="chat-input-wrap">
+          <div class="emoji-wrap"><button class="emoji-btn" onclick="toggleEmoji(event,'model')">😊</button><div class="emoji-panel" id="emojiPanelModel"></div></div>
+          <textarea id="modelConvInput" data-i18n-ph="ask_model" placeholder="Ask about the model..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendModelConvMsg()}"></textarea>
+          <button class="send-btn" onclick="sendModelConvMsg()">📤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="fc-brand"><div class="flogo" id="footerLogo">E</div><div><b>Amanda Agent</b><small data-i18n="brand_sub">Fashion & Beauty</small></div></div>
+    <div class="fc-section"><h4 data-i18n="footer_contact">📞 Contact</h4><a id="ftTg" href="https://t.me/amandaagent" target="_blank">✈️ Telegram</a><a id="ftWa" href="https://wa.me/251900000000" target="_blank">💬 WhatsApp</a><a id="ftEmail" href="mailto:info@amandaagent.com">📧 Email</a></div>
+    <div class="fc-section"><h4 data-i18n="footer_address">📍 Address</h4><p id="ftAddress">Addis Ababa</p><p data-i18n="footer_hours">Mon-Sat · 8:00-20:00</p></div>
+    <div class="fc-section"><h4 data-i18n="footer_about">ℹ️ About</h4><p data-i18n="footer_about_text">Amanda Agent — Modern fashion items made for women.</p></div>
+  </div>
+  <div class="footer-bottom">© <span id="year"></span> Amanda Agent</div>
+</footer>
+
+<div class="bottom-nav">
+  <button class="bnav-btn on" data-bnav="home" onclick="bnavGo('home')"><span class="bi">🏠</span><span data-i18n="nav_home">Home</span></button>
+  <button class="bnav-btn" data-bnav="fav" onclick="bnavGo('fav')"><span class="bi">❤️</span><span data-i18n="nav_fav">Favorites</span></button>
+  <button class="bnav-btn" data-bnav="support" onclick="bnavGo('support')"><span class="bi">🎧</span><span data-i18n="nav_support">Support</span></button>
+  <button class="bnav-btn" data-bnav="profile" onclick="bnavGo('profile')"><span class="bi">👤</span><span data-i18n="nav_profile">Profile</span></button>
+</div>
+
+<!-- USER EDIT MODAL -->
+<div class="modal-bg" id="userEditModal">
+  <div class="modal">
+    <button class="mclose" onclick="closeUserEdit()">×</button>
+    <h3 data-i18n="me_title">My Profile</h3>
+    <p class="msub" data-i18n="me_sub">Update your info</p>
+    <div class="err" id="editErr"></div><div class="ok" id="editOk"></div>
+    <div class="avatar-edit" id="editAvatarPick" onclick="document.getElementById('editAvatarFile').click()"><span class="ph">📷</span></div>
+    <input type="file" id="editAvatarFile" accept="image/*" hidden onchange="onEditAvatarPick(event)">
+    <div class="field"><label data-i18n="lbl_name">Full Name *</label><input class="input" id="editName"></div>
+    <div class="field"><label data-i18n="lbl_username2">Username *</label><input class="input" id="editUsername"></div>
+    <div class="field"><label data-i18n="lbl_phone">Phone *</label><div class="phone-row"><select class="input" id="editCountry"></select><input class="input" id="editPhone" type="tel" inputmode="numeric"></div></div>
+    <div style="display:flex;gap:10px;margin-top:8px"><button class="btn btn-primary" style="flex:1" onclick="saveUserEdit()">💾 Save</button><button class="btn btn-ghost" onclick="closeUserEdit()">Cancel</button></div>
+    <div class="section-divider">🔒 Security</div>
+    <button class="pwd-toggle-btn" id="pwdToggle" onclick="togglePwdSection()"><span data-i18n="sec_change_pwd">🔑 Change Password</span><span>▼</span></button>
+    <div class="pwd-section" id="pwdSection">
+      <div class="err" id="pwdErr"></div><div class="ok" id="pwdOk"></div>
+      <div class="field"><label>Current Password</label><input class="input" type="password" id="pwdCurrent"></div>
+      <div class="field"><label>New Password</label><input class="input" type="password" id="pwdNew"></div>
+      <div class="field"><label>Confirm</label><input class="input" type="password" id="pwdConfirm"></div>
+      <button class="btn btn-primary btn-block" onclick="savePasswordChange()">🔑 Update Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAST TEXT MODAL -->
+<div class="modal-bg" id="fastTextModal">
+  <div class="modal">
+    <button class="mclose" onclick="closeFastText()">×</button>
+    <h3 data-i18n="fast_text">💬 Fast Text</h3>
+    <p class="msub" id="fastTextSub">Send a message</p>
+    <div class="err" id="ftErr"></div>
+    <div class="field"><label data-i18n="lbl_msg">Message</label><textarea class="input" id="ftText" placeholder="Hello..."></textarea></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-primary" style="flex:1" onclick="sendFastText()">📤 Send</button><button class="btn btn-ghost" onclick="closeFastText()">Cancel</button></div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="if(event.target.id==='lightbox')closeLightbox()"><button class="close" onclick="closeLightbox()">×</button><img id="lightboxImg" src=""></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="shared.js"></script>
+
+<script>
+/* ============================================================
+   Amanda Agent — user.html
+   ============================================================ */
+
+var DB = { users: [], profiles: [], messages: [], ratings: [] };
+var CURRENT = null;
+var FAVS = [];
+var RECENTS = [];
+var VIEW_COUNTS = {};
+var FILTER = 'all';
+var EDIT_AVATAR = '';
+var FT_MODEL = null;
+var NOTIFS = [];
+var SUPPORT_TAB = 'fasttext';
+var ACTIVE_MODEL_CONV = null;
+var GUEST = false;
+var _pendingStars = 0;
+var _typingTimer = null;
+
+function dbLoad() {
+  var d = loadDB();
+  DB.users = d.users;
+  DB.profiles = d.profiles;
+  DB.messages = d.messages;
+  try { DB.ratings = JSON.parse(localStorage.getItem('ea_ratings') || '[]'); } catch (e) { DB.ratings = []; }
+  if (!Array.isArray(DB.ratings)) DB.ratings = [];
+}
+function dbSave() {
+  saveDB(DB);
+  try { localStorage.setItem('ea_ratings', JSON.stringify(DB.ratings)); } catch (e) {}
+}
+function loadJSON(k, fb) {
+  try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(fb)); } catch (e) { return fb; }
+}
+function saveJSON(k, v) {
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+}
+
+(function initAuth() {
+    dbLoad();
+    /* ⭐ Check maintenance */
+    checkMaintenance();
+    var u = getCurrentUser();
+  if (u && u.role === 'owner') { goTo('owner.html'); return; }
+  if (u && u.role === 'model') { goTo('model.html'); return; }
+  if (!u) {
+    GUEST = true;
+    CURRENT = {
+      id: 'guest_' + Date.now(), name: 'Demo User', username: 'demo',
+      countryCode: '+251', phoneLocal: '900000000', phone: '+251900000000',
+      role: 'viewer', avatar: ''
+    };
+  } else {
+    CURRENT = u;
+  }
+  FAVS = loadJSON('ea_favs_' + CURRENT.id, []);
+  RECENTS = loadJSON('ea_recents_' + CURRENT.id, []);
+  VIEW_COUNTS = loadJSON('ea_views', {});
+  refreshUserUI();
+})();
+
+function refreshUserUI() {
+  var n = CURRENT.name || 'User';
+  var first = n.split(' ')[0];
+  var av = initials(n);
+  var handle = '@' + (CURRENT.username || 'demo');
+  if (CURRENT.phone) handle += ' · ' + CURRENT.phone;
+
+  ['navAv', 'uAv', 'umAv'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = CURRENT.avatar ? '<img src="' + esc(CURRENT.avatar) + '">' : av;
+  });
+  var e;
+  e = document.getElementById('uName'); if (e) e.textContent = first;
+  e = document.getElementById('navName'); if (e) e.textContent = first;
+  e = document.getElementById('uName2'); if (e) e.textContent = n;
+  e = document.getElementById('umName'); if (e) e.textContent = n;
+  e = document.getElementById('uHandle'); if (e) e.textContent = handle;
+  e = document.getElementById('umHandle'); if (e) e.textContent = handle;
+}
+
+function bnavGo(w) {
+  var bn = document.querySelectorAll('.bnav-btn');
+  for (var i = 0; i < bn.length; i++) bn[i].classList.remove('on');
+  var b = document.querySelector('.bnav-btn[data-bnav="' + w + '"]');
+  if (b) b.classList.add('on');
+  if (w === 'home') { backToBrowse(); setFilter('all'); }
+  else if (w === 'fav') { backToBrowse(); setFilter('fav'); }
+  else if (w === 'support') { openSupportView('fasttext'); }
+  else if (w === 'profile') { openUserEdit(); }
+}
+
+function setFilter(f) {
+  FILTER = f;
+  var stats = document.querySelectorAll('.stat');
+  for (var i = 0; i < stats.length; i++) stats[i].classList.remove('on');
+  var tabs = document.querySelectorAll('.tab');
+  for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('on');
+  var sm = { all: 'statAll', fav: 'statFav', recent: 'statRecent' };
+  var tm = { all: 'tabAll', fav: 'tabFav', recent: 'tabRecent' };
+  var se = document.getElementById(sm[f]); if (se) se.classList.add('on');
+  var te = document.getElementById(tm[f]); if (te) te.classList.add('on');
+  render();
+}
+
+function getList() {
+  var l = DB.profiles.slice();
+  if (FILTER === 'fav') l = l.filter(function(p) { return FAVS.indexOf(p.id) > -1; });
+  if (FILTER === 'recent') {
+    var o = [];
+    for (var i = 0; i < RECENTS.length; i++) {
+      for (var j = 0; j < DB.profiles.length; j++) {
+        if (DB.profiles[j].id === RECENTS[i]) { o.push(DB.profiles[j]); break; }
+      }
+    }
+    l = o;
+  }
+  l.sort(function(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+  var si = document.getElementById('searchInput');
+  var q = si ? (si.value || '').trim().toLowerCase() : '';
+  if (q) {
+    l = l.filter(function(p) {
+      return (p.name || '').toLowerCase().indexOf(q) > -1 ||
+             (p.code || '').toLowerCase().indexOf(q) > -1 ||
+             (p.telegram || '').toLowerCase().indexOf(q) > -1;
+    });
+  }
+  return l;
+}
+
+function getAvgRating(profileId) {
+  var list = DB.ratings.filter(function(r) { return r.profileId === profileId; });
+  if (!list.length) return { avg: 0, count: 0 };
+  var sum = 0;
+  for (var i = 0; i < list.length; i++) sum += list[i].stars;
+  return { avg: (sum / list.length), count: list.length };
+}
+
+function renderStars(avg) {
+  var h = '<span class="stars-row">';
+  for (var i = 1; i <= 5; i++) h += '<span class="star ' + (i <= Math.round(avg) ? 'filled' : '') + '">★</span>';
+  h += '</span>';
+  return h;
+}
+
+function renderStats() {
+  var tp = 0;
+  for (var i = 0; i < DB.profiles.length; i++) tp += (DB.profiles[i].photos && DB.profiles[i].photos.length) || 0;
+  var s = function(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+  s('stAll', DB.profiles.length);
+  s('stFav', FAVS.length);
+  s('stRecent', RECENTS.length);
+  s('stPhotos', tp);
+  s('cntAll', DB.profiles.length);
+  s('cntFav', FAVS.length);
+  s('cntRecent', RECENTS.length);
+}
+
+function render() {
+  renderStats();
+  var g = document.getElementById('grid');
+  if (!g) return;
+  var l = getList();
+  if (!l.length) {
+    var msg = FILTER === 'fav' ? T('no_favorites') :
+              FILTER === 'recent' ? T('no_recent') :
+              T('no_results');
+    g.innerHTML = '<div class="empty"><div class="ei">🪞</div><h3>' + msg + '</h3></div>';
+    return;
+  }
+  var h = '';
+  for (var i = 0; i < l.length; i++) {
+    var p = l[i];
+    var av = p.avatar ? '<img src="' + esc(p.avatar) + '">' : '<div class="noav">' + initials(p.name) + '</div>';
+    var isFav = FAVS.indexOf(p.id) > -1;
+    var nP = (p.photos && p.photos.length) || 0;
+    var rt = getAvgRating(p.id);
+    var rmeta = rt.count > 0
+      ? '<div class="rating-meta">' + renderStars(rt.avg) + '<span class="avg">' + rt.avg.toFixed(1) + '</span><span>(' + rt.count + ')</span></div>'
+      : '';
+    var presence = window._presence || {};
+var uid = p.userId || p.id;
+var status = getPresenceStatus(presence, uid);
+var dotColor = status === 'online' ? '#22c55e' : status === 'away' ? '#f59e0b' : '#9ca3af';
+var dot = '<span style="position:absolute;bottom:8px;left:8px;width:14px;height:14px;border-radius:50%;background:' + dotColor + ';border:2px solid #fff;z-index:5"></span>';
+
+h += '<div class="pcard" onclick="openProfile(\'' + p.id + '\')">' +
+  '<div class="pcard-cover">' + av +
+  (p.code ? '<div class="code-tag">' + p.code + '</div>' : '') +
+  dot +
+  '<button class="fav' + (isFav ? ' on' : '') + '" onclick="event.stopPropagation();toggleFav(\'' + p.id + '\')">' + (isFav ? '❤️' : '🤍') + '</button>' +
+  '</div>' +
+      '<div class="pcard-body">' +
+        '<h4>' + esc(p.name) + '</h4>' +
+        '<div class="meta">' + (p.age ? esc(p.age) + ' yrs' : '') + (nP ? ' • 🖼️ ' + nP : '') + '</div>' +
+        rmeta +
+        '<button class="btn" onclick="event.stopPropagation();openProfile(\'' + p.id + '\')">' + T('btn_view') + '</button>' +
+      '</div></div>';
+  }
+  g.innerHTML = h;
+}
+
+function toggleFav(id) {
+  var i = FAVS.indexOf(id);
+  if (i > -1) { FAVS.splice(i, 1); toast('Removed'); }
+  else { FAVS.push(id); toast('Added ❤️', 'ok'); }
+  saveJSON('ea_favs_' + CURRENT.id, FAVS);
+  render();
+  var pv = document.getElementById('profileView');
+  if (pv && pv.classList.contains('on')) openProfile(id, true);
+}
+
+function backToBrowse() {
+  document.getElementById('browseView').classList.remove('off');
+  document.getElementById('profileView').classList.remove('on');
+  document.getElementById('supportView').classList.remove('on');
+  render();
+  window.scrollTo(0, 0);
+}
+
+function openProfile(id, keep) {
+  var p = null;
+  for (var i = 0; i < DB.profiles.length; i++) { if (DB.profiles[i].id === id) { p = DB.profiles[i]; break; } }
+  if (!p) return;
+
+  var nr = [id];
+  for (var r = 0; r < RECENTS.length; r++) if (RECENTS[r] !== id) nr.push(RECENTS[r]);
+  RECENTS = nr.slice(0, 30);
+  saveJSON('ea_recents_' + CURRENT.id, RECENTS);
+  VIEW_COUNTS[id] = (VIEW_COUNTS[id] || 0) + 1;
+  saveJSON('ea_views', VIEW_COUNTS);
+
+  var av = p.avatar ? '<img src="' + esc(p.avatar) + '">' : initials(p.name);
+  var photos = p.photos || [];
+  var isFav = FAVS.indexOf(id) > -1;
+
+  var gal = '';
+  for (var g = 0; g < photos.length; g++) {
+    gal += '<div class="gitem" onclick="openLightbox(\'' + esc(photos[g]) + '\')"><img src="' + esc(photos[g]) + '"></div>';
+  }
+  if (!photos.length) gal = '<div class="empty" style="grid-column:1/-1;padding:30px"><div class="ei">🖼️</div><p>—</p></div>';
+
+  var c = '';
+  if (p.telegram) c += '<a class="act-btn tg" href="https://t.me/' + esc(p.telegram.replace(/^@/, '')) + '" target="_blank">✈️ Telegram</a>';
+  if (p.whatsapp) c += '<a class="act-btn wa" href="https://wa.me/' + esc(p.whatsapp.replace(/[^0-9]/g, '')) + '" target="_blank">💬 WhatsApp</a>';
+  c += '<button class="act-btn fast" onclick="openFastText(\'' + p.id + '\',\'' + esc(p.name).replace(/'/g, "\\'") + '\')">💬 Fast Text</button>';
+
+  var myRating = null;
+  for (var k = 0; k < DB.ratings.length; k++) {
+    if (DB.ratings[k].profileId === id && DB.ratings[k].userId === CURRENT.id) { myRating = DB.ratings[k]; break; }
+  }
+  var rt = getAvgRating(id);
+  var ratingSection = '<div class="prof-body"><h2><span class="dash"></span>' + T('ratings') + '</h2>';
+  if (rt.count > 0) {
+    ratingSection += '<div class="avg-rating-box"><div class="big-num">' + rt.avg.toFixed(1) + '</div><div><div>' + renderStars(rt.avg) + '</div><div style="font-size:12px;color:var(--muted);margin-top:4px">' + rt.count + ' ratings</div></div></div>';
+  }
+  _pendingStars = myRating ? myRating.stars : 0;
+  ratingSection += '<div class="rate-form">' +
+    '<div class="rate-title">' + (myRating ? '⭐ Your rating' : '⭐ Rate this model') + '</div>' +
+    '<div class="star-select" id="starSelect">';
+  for (var s = 1; s <= 5; s++) {
+    ratingSection += '<span class="star ' + (s <= _pendingStars ? 'filled' : '') + '" onclick="setRatingStar(' + s + ')">★</span>';
+  }
+  ratingSection += '</div>' +
+    '<textarea class="rate-textarea" id="rateComment" placeholder="Comment (optional)">' + (myRating ? esc(myRating.comment || '') : '') + '</textarea>' +
+    '<div class="rate-btns">' +
+      (myRating ? '<button class="btn btn-ghost" onclick="deleteMyRating(\'' + id + '\')">🗑️</button>' : '') +
+      '<button class="btn btn-primary" onclick="submitRating(\'' + id + '\')">⭐ Submit</button>' +
+    '</div></div>';
+
+  var allR = DB.ratings.filter(function(r) { return r.profileId === id; }).sort(function(a, b) { return b.time - a.time; }).slice(0, 5);
+  if (allR.length) {
+    ratingSection += '<div style="margin-top:14px">';
+    for (var z = 0; z < allR.length; z++) {
+      var rr = allR[z];
+      var uName = 'User';
+      for (var uu = 0; uu < DB.users.length; uu++) {
+        if (DB.users[uu].id === rr.userId) { uName = DB.users[uu].name || 'User'; break; }
+      }
+      ratingSection += '<div class="rating-item">' +
+        '<div class="rating-item-head"><b>' + esc(uName) + '</b><span>' + timeAgo(rr.time) + '</span></div>' +
+        '<div class="rating-item-stars">' + renderStars(rr.stars) + '</div>' +
+        (rr.comment ? '<div class="rating-item-text">' + esc(rr.comment) + '</div>' : '') +
+      '</div>';
+    }
+    ratingSection += '</div>';
+  }
+  ratingSection += '</div>';
+
+  var content =
+    '<div class="prof-hero"><div class="prof-av">' + av + '</div>' +
+      '<h1>' + esc(p.name) + '</h1>' +
+     '<div class="prof-badges">' +
+(p.code ? '<span class="badge code">🔖 ' + p.code + '</span>' : '') +
+(function() {
+  var pr = window._presence || {};
+  var uid = p.userId || p.id;
+  var st = getPresenceStatus(pr, uid);
+  if (st === 'online') return '<span class="badge" style="background:rgba(34,197,94,.15);color:#16a34a;border-color:rgba(34,197,94,.3)">🟢 Online</span>';
+  if (st === 'away') return '<span class="badge" style="background:rgba(245,158,11,.15);color:#d97706;border-color:rgba(245,158,11,.3)">🟡 Away</span>';
+  return '<span class="badge" style="background:rgba(156,163,175,.15);color:#6b7280;border-color:rgba(156,163,175,.3)">⚪ ' + getLastSeen(pr, uid) + '</span>';
+})() +
+'<span class="badge">' + T('verified') + '</span>' +
+  (p.age ? '<span class="badge">🎂 ' + esc(p.age) + '</span>' : '') +
+  (rt.count > 0 ? '<span class="badge" style="background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)">⭐ ' + rt.avg.toFixed(1) + '</span>' : '') +
+  '</div></div>' +
+    '<div class="prof-actions">' +
+      '<button class="act-btn ' + (isFav ? 'on' : '') + '" onclick="toggleFav(\'' + p.id + '\')">' + (isFav ? T('favorited') : T('favorite')) + '</button>' +
+      c +
+    '</div>' +
+    (p.bio ? '<div class="prof-body"><h2><span class="dash"></span>' + T('about_her') + '</h2><p>' + esc(p.bio) + '</p></div>' : '') +
+    (photos.length ? '<div class="prof-body"><h2><span class="dash"></span>' + T('gallery') + '</h2><div class="gallery">' + gal + '</div></div>' : '') +
+    ratingSection;
+
+  document.getElementById('profileContent').innerHTML = content;
+
+  if (!keep) {
+    document.getElementById('browseView').classList.add('off');
+    document.getElementById('profileView').classList.add('on');
+    document.getElementById('supportView').classList.remove('on');
+    window.scrollTo(0, 0);
+  }
+}
+
+function setRatingStar(n) {
+  _pendingStars = n;
+  var ss = document.getElementById('starSelect');
+  if (!ss) return;
+  var stars = ss.querySelectorAll('.star');
+  for (var i = 0; i < stars.length; i++) stars[i].classList.toggle('filled', (i + 1) <= n);
+}
+
+function submitRating(profileId) {
+  if (GUEST) { toast('Please login to rate', 'err'); return; }
+  if (!_pendingStars || _pendingStars < 1) { toast('Select stars first', 'err'); return; }
+  var rc = document.getElementById('rateComment');
+  var comment = rc ? rc.value : '';
+  DB.ratings = DB.ratings.filter(function(r) {
+    return !(r.profileId === profileId && r.userId === CURRENT.id);
+  });
+  DB.ratings.push({
+    id: uid('rt'), profileId: profileId, userId: CURRENT.id,
+    stars: _pendingStars, comment: comment.trim(), time: Date.now()
+  });
+  dbSave();
+  toast('⭐ Rating saved!', 'ok');
+  _pendingStars = 0;
+  openProfile(profileId, true);
+}
+
+function deleteMyRating(profileId) {
+  DB.ratings = DB.ratings.filter(function(r) {
+    return !(r.profileId === profileId && r.userId === CURRENT.id);
+  });
+  dbSave();
+  toast('Rating removed');
+  _pendingStars = 0;
+  openProfile(profileId, true);
+}
+
+function openSupportView(tab) {
+  document.getElementById('browseView').classList.add('off');
+  document.getElementById('profileView').classList.remove('on');
+  document.getElementById('supportView').classList.add('on');
+  var bn = document.querySelectorAll('.bnav-btn');
+  for (var i = 0; i < bn.length; i++) bn[i].classList.remove('on');
+  var b = document.querySelector('.bnav-btn[data-bnav="support"]');
+  if (b) b.classList.add('on');
+  setSupportTab(tab || 'fasttext');
+  window.scrollTo(0, 0);
+}
+
+function setSupportTab(t) {
+  SUPPORT_TAB = t;
+  document.getElementById('stabFT').classList.toggle('on', t === 'fasttext');
+  document.getElementById('stabSup').classList.toggle('on', t === 'support');
+  document.getElementById('supportFTContent').style.display = t === 'fasttext' ? '' : 'none';
+  document.getElementById('supportSupContent').style.display = t === 'support' ? '' : 'none';
+  document.getElementById('supportSingleConv').style.display = 'none';
+  ACTIVE_MODEL_CONV = null;
+  if (t === 'fasttext') renderModelConvos();
+  if (t === 'support') {
+    renderChat();
+    /* Mark owner messages as read */
+    setTimeout(function() {
+      var unread = DB.messages.filter(function(m) {
+        return m.fromId === 'owner' && m.toId === CURRENT.id && !m.read;
+      });
+      if (unread.length) {
+        var ids = unread.map(function(m) { return m.id; });
+        if (typeof fbMarkRead === 'function') fbMarkRead(ids);
+        unread.forEach(function(m) { m.read = true; });
+        try { localStorage.setItem('ea_messages', JSON.stringify(DB.messages)); } catch (e) {}
+      }
+    }, 300);
+  }
+}
+
+function renderModelConvos() {
+  var w = document.getElementById('modelConvos');
+  if (!w) return;
+  var cv = {};
+  for (var i = 0; i < DB.messages.length; i++) {
+    var m = DB.messages[i];
+    if (!m.aboutModelId) continue;
+    if (m.fromId !== CURRENT.id) continue;
+    if (!cv[m.aboutModelId]) {
+      cv[m.aboutModelId] = { id: m.aboutModelId, name: m.aboutModelName || 'Model', code: m.aboutModelCode || '', last: m.time, lastMsg: m };
+    }
+    if (m.time > cv[m.aboutModelId].last) {
+      cv[m.aboutModelId].last = m.time;
+      cv[m.aboutModelId].lastMsg = m;
+    }
+  }
+  var list = [];
+  for (var k in cv) list.push(cv[k]);
+  list.sort(function(a, b) { return b.last - a.last; });
+
+  if (!list.length) {
+    w.innerHTML = '<div class="empty"><div class="ei">💬</div><h3>' + T('no_convo') + '</h3><p>' + T('no_convo_sub') + '</p></div>';
+    return;
+  }
+  var h = '';
+  for (var y = 0; y < list.length; y++) {
+    var c = list[y];
+    var p = null;
+    for (var z = 0; z < DB.profiles.length; z++) { if (DB.profiles[z].id === c.id) { p = DB.profiles[z]; break; } }
+    var av = p && p.avatar ? '<img src="' + esc(p.avatar) + '">' : initials(c.name);
+    var code = c.code || (p && p.code) || '';
+    var pr = c.lastMsg.text || '';
+    pr = (c.lastMsg.fromId === 'owner' ? '👑 ' : '👤 ') + pr;
+    h += '<div class="mc-item" onclick="openModelConversation(\'' + c.id + '\')">' +
+      '<div class="mc-av">' + av + '</div>' +
+      '<div class="mc-info"><b>' + (code ? '<span class="mccode">' + code + '</span>' : '') + esc(c.name) + '</b><p>' + esc(pr.substring(0, 50)) + '</p></div>' +
+      '<div class="mc-meta"><small>' + timeAgo(c.last) + '</small></div>' +
+    '</div>';
+  }
+  w.innerHTML = h;
+}
+
+function openModelConversation(id) {
+  var p = null;
+  for (var i = 0; i < DB.profiles.length; i++) { if (DB.profiles[i].id === id) { p = DB.profiles[i]; break; } }
+  if (!p) return;
+  ACTIVE_MODEL_CONV = { modelId: id, modelName: p.name, modelCode: p.code || '' };
+  document.getElementById('supportFTContent').style.display = 'none';
+  document.getElementById('supportSupContent').style.display = 'none';
+  document.getElementById('supportSingleConv').style.display = '';
+  var av = p.avatar ? '<img src="' + esc(p.avatar) + '">' : initials(p.name);
+  document.getElementById('modelConvAv').innerHTML = av;
+  document.getElementById('modelConvName').textContent = p.name;
+  document.getElementById('modelConvCode').textContent = '🔖 ' + (p.code || 'Fast Text');
+  renderModelConvChat();
+}
+
+function backToModelList() {
+  ACTIVE_MODEL_CONV = null;
+  document.getElementById('supportSingleConv').style.display = 'none';
+  document.getElementById('supportFTContent').style.display = '';
+  renderModelConvos();
+}
+
+function renderModelConvChat() {
+  if (!ACTIVE_MODEL_CONV) return;
+  var mid = ACTIVE_MODEL_CONV.modelId;
+  var msgs = DB.messages.filter(function(m) {
+    return m.aboutModelId === mid &&
+      ((m.fromId === CURRENT.id && m.toId === 'owner') ||
+       (m.fromId === 'owner' && m.toId === CURRENT.id));
+  });
+  msgs.sort(function(a, b) { return a.time - b.time; });
+  var cb = document.getElementById('modelConvBody');
+  if (!cb) return;
+  if (!msgs.length) {
+    cb.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px 20px;font-size:13px">👋 ' + T('ask_model') + '</div>';
+    return;
+  }
+  var h = '<div class="chat-bubble about-model">🔖 ' + (ACTIVE_MODEL_CONV.modelCode ? ACTIVE_MODEL_CONV.modelCode + ' · ' : '') + esc(ACTIVE_MODEL_CONV.modelName) + '</div>';
+  for (var i = 0; i < msgs.length; i++) {
+    var m = msgs[i];
+    var isMe = m.fromId === CURRENT.id;
+    var body = '';
+    if (m.image) body += '<img src="' + m.image + '" class="chat-img">';
+    if (m.text) body += (m.image ? '<div style="margin-top:6px">' : '') + esc(m.text) + (m.image ? '</div>' : '');
+    h += '<div class="chat-bubble ' + (isMe ? 'me' : 'them') + '">' + body + '<span class="meta">' + timeAgo(m.time) + '</span></div>';
+  }
+  cb.innerHTML = h;
+  cb.scrollTop = cb.scrollHeight;
+  var imgs = cb.querySelectorAll('.chat-img');
+  for (var k = 0; k < imgs.length; k++) {
+    (function(img) {
+      img.onclick = function() {
+        document.getElementById('lightboxImg').src = img.getAttribute('src');
+        document.getElementById('lightbox').classList.add('show');
+      };
+    })(imgs[k]);
+  }
+}
+
+function sendModelConvMsg() {
+  if (!ACTIVE_MODEL_CONV) return;
+  var inp = document.getElementById('modelConvInput');
+  if (!inp) return;
+  var t = inp.value.trim();
+  if (!t) return;
+  DB.messages.push({
+    id: uid('msg'), fromId: CURRENT.id, fromName: CURRENT.name, fromUsername: CURRENT.username,
+    toId: 'owner', toName: 'Owner',
+    aboutModelId: ACTIVE_MODEL_CONV.modelId, aboutModelName: ACTIVE_MODEL_CONV.modelName,
+    aboutModelCode: ACTIVE_MODEL_CONV.modelCode || '',
+    text: t, time: Date.now(), read: false, type: 'fasttext'
+  });
+  dbSave();
+  inp.value = '';
+  renderModelConvChat();
+}
+
+function renderChat() {
+  var msgs = DB.messages.filter(function(m) {
+    if (m.aboutModelId) return false;
+    return (m.fromId === CURRENT.id && m.toId === 'owner') ||
+           (m.fromId === 'owner' && m.toId === CURRENT.id);
+  });
+  msgs.sort(function(a, b) { return a.time - b.time; });
+  var cb = document.getElementById('chatBody');
+  if (!cb) return;
+  if (!msgs.length) {
+    cb.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px 20px;font-size:13px">👋 ' + T('chat_owner') + '</div>';
+    return;
+  }
+  var h = '';
+  for (var i = 0; i < msgs.length; i++) {
+    var m = msgs[i];
+    var isMe = m.fromId === CURRENT.id;
+    var isRead = m.read === true;
+    var tick = isMe ? '<span>' + (isRead ? '✓✓' : '✓') + '</span>' : '';
+    var body = '';
+    if (m.image) body += '<img src="' + m.image + '" class="chat-img">';
+    if (m.text) body += (m.image ? '<div style="margin-top:6px">' : '') + esc(m.text) + (m.image ? '</div>' : '');
+    h += '<div class="chat-bubble ' + (isMe ? 'me' : 'them') + '">' + body +
+      '<span class="meta"><span>' + timeAgo(m.time) + '</span>' + tick + '</span></div>';
+  }
+  cb.innerHTML = h;
+  cb.scrollTop = cb.scrollHeight;
+  var imgs = cb.querySelectorAll('.chat-img');
+  for (var k = 0; k < imgs.length; k++) {
+    (function(img) {
+      img.onclick = function() {
+        document.getElementById('lightboxImg').src = img.getAttribute('src');
+        document.getElementById('lightbox').classList.add('show');
+      };
+    })(imgs[k]);
+  }
+  var unread = msgs.filter(function(m) { return m.fromId !== CURRENT.id && !m.read; });
+  if (unread.length) {
+    var ids = unread.map(function(m) { return m.id; });
+    if (typeof fbMarkRead === 'function') fbMarkRead(ids);
+    unread.forEach(function(m) { m.read = true; });
+    try { localStorage.setItem('ea_messages', JSON.stringify(DB.messages)); } catch (e) {}
+  }
+}
+
+function sendChatToOwner() {
+  var i = document.getElementById('chatInput');
+  var t = i.value.trim();
+  if (!t) return;
+  DB.messages.push({
+    id: uid('msg'), fromId: CURRENT.id, fromName: CURRENT.name, fromUsername: CURRENT.username,
+    toId: 'owner', toName: 'Amanda Owner', text: t,
+    time: Date.now(), read: false, type: 'support'
+  });
+  dbSave();
+  i.value = '';
+  renderChat();
+}
+
+function onChatImagePick(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { toast('Choose an image', 'err'); ev.target.value = ''; return; }
+  toast('📤 Sending...', 'ok');
+  readImage(file, 900, function(dataUrl) {
+    var caption = (document.getElementById('chatInput').value || '').trim();
+    DB.messages.push({
+      id: uid('msg'), fromId: CURRENT.id, fromName: CURRENT.name, fromUsername: CURRENT.username,
+      toId: 'owner', toName: 'Amanda Owner', text: caption, image: dataUrl,
+      time: Date.now(), read: false, type: 'support'
+    });
+    dbSave();
+    document.getElementById('chatInput').value = '';
+    renderChat();
+    toast('✅ Sent', 'ok');
+  });
+  ev.target.value = '';
+}
+
+function onTyping() {
+  if (!CURRENT || SUPPORT_TAB !== 'support') return;
+  if (typeof fbSetTyping === 'function') fbSetTyping(CURRENT.id, 'owner', true);
+  clearTimeout(_typingTimer);
+  _typingTimer = setTimeout(function() {
+    if (typeof fbSetTyping === 'function') fbSetTyping(CURRENT.id, 'owner', false);
+  }, 2500);
+}
+
+var EMOJIS = {
+  Smileys: ['😀', '😊', '😍', '🥰', '😂', '🤗', '😎', '🥳'],
+  Hearts: ['❤️', '💕', '💖', '💗', '💝', '💘'],
+  Symbols: ['✨', '⭐', '🔥', '💎', '👑', '🌸', '🌺', '🎀']
+};
+function buildEmojiPanel(panelId) {
+  var el = document.getElementById(panelId);
+  if (!el) return;
+  var h = '';
+  for (var cat in EMOJIS) {
+    h += '<div class="em-title">' + cat + '</div><div class="emoji-grid">';
+    for (var i = 0; i < EMOJIS[cat].length; i++) {
+      var e = EMOJIS[cat][i];
+      h += '<button onclick="insertEmoji(\'' + e + '\',\'' + panelId + '\')">' + e + '</button>';
+    }
+    h += '</div>';
+  }
+  el.innerHTML = h;
+}
+function toggleEmoji(e, which) {
+  if (e) e.stopPropagation();
+  var id = which === 'model' ? 'emojiPanelModel' : 'emojiPanelOwner';
+  var otherId = which === 'model' ? 'emojiPanelOwner' : 'emojiPanelModel';
+  var el = document.getElementById(id);
+  var otherEl = document.getElementById(otherId);
+  if (otherEl) otherEl.classList.remove('show');
+  if (el) el.classList.toggle('show');
+}
+function insertEmoji(em, panelId) {
+  var target = panelId === 'emojiPanelModel'
+    ? document.getElementById('modelConvInput')
+    : document.getElementById('chatInput');
+  if (!target) return;
+  var s = target.selectionStart || target.value.length;
+  var en = target.selectionEnd || target.value.length;
+  target.value = target.value.substring(0, s) + em + target.value.substring(en);
+  target.selectionStart = target.selectionEnd = s + em.length;
+  target.focus();
+}
+
+function openFastText(id, name) {
+  FT_MODEL = { id: id, name: name };
+  var code = '';
+  for (var i = 0; i < DB.profiles.length; i++) {
+    if (DB.profiles[i].id === id) { code = DB.profiles[i].code || ''; break; }
+  }
+  document.getElementById('fastTextSub').textContent = '→ ' + (code ? code + ' · ' : '') + name;
+  document.getElementById('ftText').value = '';
+  document.getElementById('ftErr').classList.remove('show');
+  document.getElementById('fastTextModal').classList.add('show');
+}
+function closeFastText() {
+  document.getElementById('fastTextModal').classList.remove('show');
+  FT_MODEL = null;
+}
+function sendFastText() {
+  if (!FT_MODEL) return;
+  var t = document.getElementById('ftText').value.trim();
+  var e = document.getElementById('ftErr');
+  if (!t) { e.textContent = 'Write a message'; e.classList.add('show'); return; }
+  e.classList.remove('show');
+  var modelCode = '';
+  for (var i = 0; i < DB.profiles.length; i++) {
+    if (DB.profiles[i].id === FT_MODEL.id) { modelCode = DB.profiles[i].code || ''; break; }
+  }
+  DB.messages.push({
+    id: uid('msg'), fromId: CURRENT.id, fromName: CURRENT.name, fromUsername: CURRENT.username,
+    toId: 'owner', toName: 'Owner',
+    aboutModelId: FT_MODEL.id, aboutModelName: FT_MODEL.name, aboutModelCode: modelCode,
+    text: t, time: Date.now(), read: false, type: 'fasttext'
+  });
+  dbSave();
+  closeFastText();
+  toast('📤 Sent!', 'ok');
+}
+
+function openUserEdit() {
+  if (GUEST) { toast('Demo user — login required', 'err'); return; }
+  EDIT_AVATAR = CURRENT.avatar || '';
+  document.getElementById('editName').value = CURRENT.name || '';
+  document.getElementById('editUsername').value = CURRENT.username || '';
+  document.getElementById('editPhone').value = CURRENT.phoneLocal || '';
+  populateCountrySelect(document.getElementById('editCountry'), CURRENT.countryCode || '+251');
+  renderEditAvatar();
+  ['editErr', 'editOk', 'pwdErr', 'pwdOk'].forEach(function(id) {
+    var x = document.getElementById(id); if (x) x.classList.remove('show');
+  });
+  ['pwdCurrent', 'pwdNew', 'pwdConfirm'].forEach(function(id) {
+    var x = document.getElementById(id); if (x) x.value = '';
+  });
+  document.getElementById('pwdSection').classList.remove('show');
+  document.getElementById('userEditModal').classList.add('show');
+}
+function closeUserEdit() { document.getElementById('userEditModal').classList.remove('show'); }
+document.getElementById('userEditModal').addEventListener('click', function(e) {
+  if (e.target.id === 'userEditModal') closeUserEdit();
+});
+function togglePwdSection() { document.getElementById('pwdSection').classList.toggle('show'); }
+function renderEditAvatar() {
+  var e = document.getElementById('editAvatarPick');
+  if (!e) return;
+  e.innerHTML = EDIT_AVATAR ? '<img src="' + esc(EDIT_AVATAR) + '">' : '<span class="ph">📷</span>';
+}
+function onEditAvatarPick(ev) {
+  var f = ev.target.files[0];
+  if (!f) return;
+  readImage(f, 500, function(d) { EDIT_AVATAR = d; renderEditAvatar(); });
+  ev.target.value = '';
+}
+function saveUserEdit() {
+  var n = document.getElementById('editName').value.trim();
+  var u = document.getElementById('editUsername').value.trim().toLowerCase();
+  var cc = document.getElementById('editCountry').value;
+  var pl = onlyDigits(document.getElementById('editPhone').value.trim());
+  var e = document.getElementById('editErr');
+  e.classList.remove('show');
+  if (!n || !u || !pl) { e.textContent = 'Fill all fields'; e.classList.add('show'); return; }
+  if (!/^[a-z0-9_]{3,20}$/.test(u)) { e.textContent = 'Username 3-20'; e.classList.add('show'); return; }
+  if (!/^[0-9]{6,15}$/.test(pl)) { e.textContent = 'Phone invalid'; e.classList.add('show'); return; }
+  for (var i = 0; i < DB.users.length; i++) {
+    var x = DB.users[i];
+    if (x.id === CURRENT.id) continue;
+    if (x.username && x.username.toLowerCase() === u) { e.textContent = 'Username taken'; e.classList.add('show'); return; }
+  }
+  var fp = cc + pl;
+  for (var j = 0; j < DB.users.length; j++) {
+    var x2 = DB.users[j];
+    if (x2.id === CURRENT.id) continue;
+    if (x2.phone && onlyDigits(x2.phone) === onlyDigits(fp)) { e.textContent = 'Phone registered'; e.classList.add('show'); return; }
+  }
+  CURRENT.name = n; CURRENT.username = u; CURRENT.countryCode = cc;
+  CURRENT.phoneLocal = pl; CURRENT.phone = fp; CURRENT.avatar = EDIT_AVATAR;
+  for (var k = 0; k < DB.users.length; k++) {
+    if (DB.users[k].id === CURRENT.id) { DB.users[k] = CURRENT; break; }
+  }
+  dbSave();
+  refreshUserUI();
+  closeUserEdit();
+  toast('Saved', 'ok');
+}
+function savePasswordChange() {
+  var c = document.getElementById('pwdCurrent').value;
+  var nw = document.getElementById('pwdNew').value;
+  var cf = document.getElementById('pwdConfirm').value;
+  var e = document.getElementById('pwdErr');
+  var o = document.getElementById('pwdOk');
+  e.classList.remove('show'); o.classList.remove('show');
+  if (!c || !nw || !cf) { e.textContent = 'Fill all fields'; e.classList.add('show'); return; }
+  if (c !== CURRENT.password) { e.textContent = 'Current password wrong'; e.classList.add('show'); return; }
+  if (nw.length < 6) { e.textContent = 'Password 6+ chars'; e.classList.add('show'); return; }
+  if (nw !== cf) { e.textContent = 'Not matching'; e.classList.add('show'); return; }
+  CURRENT.password = nw;
+  for (var i = 0; i < DB.users.length; i++) {
+    if (DB.users[i].id === CURRENT.id) { DB.users[i].password = nw; break; }
+  }
+  dbSave();
+  o.textContent = '✅ Changed!'; o.classList.add('show');
+  document.getElementById('pwdCurrent').value = '';
+  document.getElementById('pwdNew').value = '';
+  document.getElementById('pwdConfirm').value = '';
+  toast('🔑 Password changed!', 'ok');
+}
+
+function loadNotifs() {
+  try { NOTIFS = JSON.parse(localStorage.getItem('ea_notifs_' + CURRENT.id) || '[]'); } catch (e) { NOTIFS = []; }
+}
+function saveNotifs() {
+  try { localStorage.setItem('ea_notifs_' + CURRENT.id, JSON.stringify(NOTIFS)); } catch (e) {}
+}
+function renderNotifs() {
+  var b = document.getElementById('notifBadge');
+  var l = document.getElementById('notifList');
+  if (!b || !l) return;
+  var u = NOTIFS.filter(function(n) { return !n.read; }).length;
+  if (u > 0) { b.textContent = u > 9 ? '9+' : u; b.style.display = ''; }
+  else b.style.display = 'none';
+  if (!NOTIFS.length) { l.innerHTML = '<div class="notif-empty">🔔 ' + T('notif_empty') + '</div>'; return; }
+  var h = '';
+  for (var i = 0; i < NOTIFS.length; i++) {
+    var n = NOTIFS[i];
+    var ic = n.type === 'reply' ? '💬' : '🔔';
+    h += '<button class="notif-item' + (n.read ? '' : ' unread') + '" onclick="openNotif(\'' + n.id + '\')">' +
+      '<div class="n-ic">' + ic + '</div>' +
+      '<div class="n-body"><b>' + esc(n.title) + '</b>' +
+      (n.text ? '<p>' + esc(n.text) + '</p>' : '') +
+      '<small>' + timeAgo(n.time) + '</small></div>' +
+    '</button>';
+  }
+  l.innerHTML = h;
+}
+function openNotif(id) {
+  for (var i = 0; i < NOTIFS.length; i++) {
+    if (NOTIFS[i].id === id) {
+      NOTIFS[i].read = true;
+      var l = NOTIFS[i].link;
+      saveNotifs(); renderNotifs();
+      document.getElementById('notifWrap').classList.remove('open');
+      if (l === 'chat') openSupportView('support');
+      return;
+    }
+  }
+}
+function markAllRead() {
+  for (var i = 0; i < NOTIFS.length; i++) NOTIFS[i].read = true;
+  saveNotifs(); renderNotifs();
+}
+function checkNewNotifs() {
+  var changed = false;
+  var r = DB.messages.filter(function(m) { return m.fromId === 'owner' && m.toId === CURRENT.id; });
+  for (var i = 0; i < r.length; i++) {
+    var m = r[i];
+    var ex = NOTIFS.some(function(n) { return n.msgId === m.id; });
+    if (!ex) {
+      NOTIFS.unshift({
+        id: 'n_' + m.id, msgId: m.id, type: 'reply',
+        title: 'Reply from owner', text: m.text.substring(0, 60),
+        link: 'chat', read: false, time: m.time
+      });
+      changed = true;
+    }
+  }
+  if (changed) {
+    if (NOTIFS.length > 50) NOTIFS = NOTIFS.slice(0, 50);
+    saveNotifs(); renderNotifs();
+  }
+}
+
+function toggleNotifMenu(e) {
+  if (e) e.stopPropagation();
+  var all = document.querySelectorAll('.lang-wrap,.notif-wrap,.user-menu-wrap');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('open');
+  document.getElementById('notifWrap').classList.toggle('open');
+}
+function toggleUserMenu(e) {
+  if (e) e.stopPropagation();
+  var all = document.querySelectorAll('.lang-wrap,.notif-wrap,.user-menu-wrap');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('open');
+  document.getElementById('userMenuWrap').classList.toggle('open');
+}
+function closeUserMenu() { document.getElementById('userMenuWrap').classList.remove('open'); }
+
+function openLightbox(s) {
+  document.getElementById('lightboxImg').src = s;
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('show'); }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+var _origApplyLang = applyLang;
+applyLang = function() {
+  _origApplyLang();
+  if (typeof render === 'function') render();
+  if (typeof renderNotifs === 'function') renderNotifs();
+  if (typeof renderModelConvos === 'function') renderModelConvos();
+};
+
+(function initUser() {
+  applyLang();
+  /* ⭐ Start presence tracking */
+if (typeof startPresenceTracking === 'function') {
+  startPresenceTracking(CURRENT.id);
+}
+  document.getElementById('year').textContent = new Date().getFullYear();
+  buildEmojiPanel('emojiPanelOwner');
+  buildEmojiPanel('emojiPanelModel');
+  loadNotifs();
+  renderNotifs();
+  checkNewNotifs();
+  setInterval(checkNewNotifs, 10000);
+  render();
+  /* ⭐ Real-time presence */
+if (typeof fbListenPresence === 'function') {
+  fbListenPresence(function(presence) {
+    window._presence = presence;
+    render();
+  });
+}
+
+  /* Real-time messages */
+  var _seenMsgIds = {};
+  (DB.messages || []).forEach(function(m) { _seenMsgIds[m.id] = true; });
+  if (typeof fbListenMessages === 'function') {
+    fbListenMessages(function(msgs) {
+      DB.messages = msgs || [];
+      var newToMe = [];
+      DB.messages.forEach(function(m) {
+        if (!_seenMsgIds[m.id]) {
+          _seenMsgIds[m.id] = true;
+          if (m.toId === CURRENT.id && m.fromId !== CURRENT.id) newToMe.push(m);
+        }
+      });
+      if (newToMe.length > 0) {
+        var latest = newToMe[newToMe.length - 1];
+        if (typeof playBeep === 'function') playBeep();
+        if (typeof showSystemNotif === 'function') {
+          showSystemNotif('💬 ' + (latest.fromName || 'Amanda'), latest.text || '📷 Image', 'user.html');
+        }
+        if (typeof updateTitleCount === 'function') {
+          var unread = DB.messages.filter(function(m) { return m.toId === CURRENT.id && m.fromId !== CURRENT.id && !m.read; }).length;
+          updateTitleCount(unread);
+        }
+      }
+      var sv = document.getElementById('supportView');
+      if (sv && sv.classList.contains('on')) {
+        if (SUPPORT_TAB === 'support') renderChat();
+        if (SUPPORT_TAB === 'fasttext') {
+          if (ACTIVE_MODEL_CONV) renderModelConvChat();
+          else renderModelConvos();
+        }
+      }
+      checkNewNotifs();
+    });
+  }
+
+  if (typeof fbListenTyping === 'function') {
+    fbListenTyping(CURRENT.id, function(typers) {
+      var el = document.getElementById('chatTyping');
+      if (!el) return;
+      el.style.display = (typers && typers.indexOf('owner') > -1) ? '' : 'none';
+    });
+  }
+
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible' && typeof updateTitleCount === 'function') updateTitleCount(0);
+  });
+
+  window.onFirebaseReady = function() {
+    render();
+    if (typeof applyCover === 'function') applyCover();
+  };
+if (typeof fbListenSettings === 'function') {
+  fbListenSettings(function() { checkMaintenance(); });
+}
+  try { console.log('[User] Ready. Models:', DB.profiles.length, 'Guest:', GUEST); } catch (e) {}
+})();
+</script>
+</body>
+</html>
